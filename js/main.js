@@ -13,134 +13,111 @@ const PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-let map = document.querySelector('.map');
-let mapPins = document.querySelector('.map__pins');
-let pin = document.querySelector('#pin').content.querySelector('.map__pin');
-let pinImg = pin.querySelector('img');
-let pinLists = document.querySelector('.map--faded');
+const ADVER_NUMBER = 8;
+const ROUND_PRICE = 10000;
+const MIN_PHYS_OBJ = 1;
+const MAX_GUESTS = 20;
 
-let mapPinsWidth = mapPins.offsetWidth;
-let pinWidth = 40;
+const PIN_WIDTH = 50;
+const PIN_HEIGHT = 70;
+const MIN_PIN_X = 0;
+const MIN_PIN_Y = 130;
+const MAX_PIN_Y = 630;
 
+const map = document.querySelector('.map');
+const mapPins = document.querySelector('.map__pins');
 
-map.classList.remove('map--faded');
+const pinLists = document.querySelector('.map--faded');
+
+const maxPinsWidth = mapPins.offsetWidth;
 
 const getShuffle = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
+  let shuffledArray = array.slice();
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
   }
-  return array;
+  return shuffledArray;
 };
-
-let imageIndex = [];
-let randomIndex = (number) => {
-  for (let i = 1; i <= number; i++) {
-    imageIndex.push(i);
-  }
-};
-
-randomIndex(8);
-
-let shuffleImageIndex = getShuffle(imageIndex);
 
 let getRandomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min);
 };
 
 let getRandomIndex = (array) => {
-  return getRandomNumber(0, array.length);
+  let arrayIndex = getRandomNumber(0, (array.length - 1));
+  return array[arrayIndex];
 };
 
-let getFeatures = () => {
-  let featuresArray = [];
-  let shuffleFeatures = getShuffle(FEATURES);
+let randomLengthArray = (array) => {
+  let newArray = [];
+  let shuffledArray = getShuffle(array);
+  let randomLength = getRandomNumber(0, array.length);
 
-  for (let featuresI = 0; featuresI <= getRandomIndex(getRandomIndex); featuresI++) {
-    let feature = shuffleFeatures[featuresI];
-    featuresArray.push(feature);
+  for(let i = 0; i < randomLength; i++) {
+    let newObj = shuffledArray[i];
+    newArray.push(newObj);
   }
-  return featuresArray;
-
+  return newArray;
 };
 
-let featuresItem = getFeatures();
+let getAdverts = (number) => {
+  const adverts = [];
+  const pinX = () => getRandomNumber(MIN_PIN_X, maxPinsWidth);
+  const pinY = () => getRandomNumber(MIN_PIN_Y, MAX_PIN_Y);
 
-let getPhotos = () => {
-  let photosArray = [];
-  let shufflePhotos = getShuffle(PHOTOS);
-
-  for (let photosI = 0; photosI <= getRandomIndex(getRandomIndex); photosI++) {
-    let photo = shufflePhotos[photosI];
-    photosArray.push(photo);
-  }
-  return photosArray;
-
-};
-
-let photosItem = getPhotos();
-
-let pinX = () => getRandomNumber(0 + pinWidth, mapPinsWidth - pinWidth);
-let pinY = () => getRandomNumber(130 + pinWidth, 631 - pinWidth);
-
-const advtes = [];
-
-let getAdvtes = (number) => {
-  for (let i = 0; i < number; i++) {
-    const advt = {
-      'author': {
-        'avatar': `img/avatars/user0${shuffleImageIndex[i]}.png`,
+  for (let i = 1; i <= number; i++) {
+    const advert = {
+      author: {
+        avatar: `img/avatars/user0${i}.png`,
     },
-    'offer': {
-        'title': `Заголовок, тут, будет, наверное`,
-        'address': '600, 350',
-        'price': Math.round(Math.random() * 10000),
-        'type': getRandomIndex(TYPE_HOUSE),
-        'rooms': getRandomNumber(1, 8),
-        'guests': getRandomNumber(1, 20),
-        'checkin': getRandomIndex(CHECKIN),
-        'checkout': getRandomIndex(CHECKOUT),
-        'features': featuresItem,
-        'description': `описательное описание`,
-        'photos': photosItem
+    offer: {
+        title: `Заголовок, тут, будет, наверное`,
+        address: `${pinX()}, ${pinY()}`,
+        price: Math.round(Math.random() * ROUND_PRICE),
+        type: getRandomIndex(TYPE_HOUSE),
+        rooms: getRandomNumber(MIN_PHYS_OBJ, ADVER_NUMBER),
+        guests: getRandomNumber(MIN_PHYS_OBJ, MAX_GUESTS),
+        checkin: getRandomIndex(CHECKIN),
+        checkout: getRandomIndex(CHECKOUT),
+        features: randomLengthArray(FEATURES),
+        description: `описательное описание`,
+        photos: randomLengthArray(PHOTOS)
     },
-    'location': {
-        'x': pinX,
-        'y': pinY
+    location: {
+        x: pinX(),
+        y: pinY()
     }
     };
-    advtes.push(advt);
+    adverts.push(advert);
   }
-  return advtes;
+
+  return adverts;
 };
-getAdvtes(8);
 
+const craetedPin = (advert) => {
+  const pin = document.querySelector('#pin').content.querySelector('.map__pin');
+  const pinElement = pin.cloneNode(true);
+  const pinImg = pinElement.querySelector('img');
 
-let renderPin = () => {
-  let pinElement = pin.cloneNode(true);
+  pinElement.style.left = `${advert.location.x - PIN_WIDTH/2}px`;
+  pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
+  pinImg.src = advert.author.avatar;
+  pinImg.alt = advert.offer.title;
 
-  for (let i = 0; i < 8; i++) {
-    getAdvtes();
-    pin.style.left =`${getRandomNumber(0 + pinWidth, mapPinsWidth - pinWidth)}px`;
-    pin.style.top = `${getRandomNumber(130 + pinWidth, 631 - pinWidth)}px`;
-    pinImg.src = advtes[i].author.avatar;
-    pinImg.alt = advtes[i].offer.title;
-    console.log(advtes[i].author.avatar);
-  }
   return pinElement;
 };
 
-renderPin(8);
+const renderPins = (adverts) => {
+  let fragment = document.createDocumentFragment();
 
-
-let getPin = (number) => {
-  let pinFragment = document.createDocumentFragment();
-    for (let i = 0; i < number; i++) {
-      pinFragment.appendChild(renderPin(advtes[i].location));
-    }
-    mapPins.appendChild(pinFragment);
+  for (let i = 0; i < adverts.length; i++) {
+    fragment.appendChild(craetedPin(adverts[i]));
+  }
+  mapPins.appendChild(fragment);
 
 };
 
-const pins = getPin(8);
-console.log(pins);
+map.classList.remove('map--faded');
+const adverts = getAdverts(ADVER_NUMBER);
+renderPins(adverts);
