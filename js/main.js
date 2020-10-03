@@ -27,10 +27,6 @@ const MAX_PIN_Y = 630;
 const map = document.querySelector('.map');
 const mapPins = document.querySelector('.map__pins');
 
-const pinLists = document.querySelector('.map--faded');
-
-const maxPinsWidth = mapPins.offsetWidth;
-
 const getShuffle = (array) => {
   let shuffledArray = array.slice();
   for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -40,16 +36,16 @@ const getShuffle = (array) => {
   return shuffledArray;
 };
 
-let getRandomNumber = (min, max) => {
+const getRandomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min);
 };
 
-let getRandomIndex = (array) => {
+const getRandomIndex = (array) => {
   let arrayIndex = getRandomNumber(0, (array.length - 1));
   return array[arrayIndex];
 };
 
-let randomLengthArray = (array) => {
+const randomLengthArray = (array) => {
   let newArray = [];
   let shuffledArray = getShuffle(array);
   let randomLength = getRandomNumber(0, array.length);
@@ -61,19 +57,21 @@ let randomLengthArray = (array) => {
   return newArray;
 };
 
-let getAdverts = (number) => {
+const getAdverts = (number) => {
   const adverts = [];
-  const pinX = () => getRandomNumber(MIN_PIN_X, maxPinsWidth);
-  const pinY = () => getRandomNumber(MIN_PIN_Y, MAX_PIN_Y);
+  const getPinX = () => getRandomNumber(MIN_PIN_X, mapPins.offsetWidth);
+  const getPinY = () => getRandomNumber(MIN_PIN_Y, MAX_PIN_Y);
 
   for (let i = 1; i <= number; i++) {
+    const pinX = getPinX();
+    const pinY = getPinY();
     const advert = {
       author: {
         avatar: `img/avatars/user0${i}.png`,
     },
     offer: {
         title: `Заголовок, тут, будет, наверное`,
-        address: `${pinX()}, ${pinY()}`,
+        address: `${pinX}, ${pinY}`,
         price: Math.round(Math.random() * ROUND_PRICE),
         type: getRandomIndex(TYPE_HOUSE),
         rooms: getRandomNumber(MIN_PHYS_OBJ, ADVER_NUMBER),
@@ -85,8 +83,8 @@ let getAdverts = (number) => {
         photos: randomLengthArray(PHOTOS)
     },
     location: {
-        x: pinX(),
-        y: pinY()
+        x: pinX,
+        y: pinY
     }
     };
     adverts.push(advert);
@@ -109,7 +107,7 @@ const craetedPin = (advert) => {
 };
 
 const renderPins = (adverts) => {
-  let fragment = document.createDocumentFragment();
+  const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < adverts.length; i++) {
     fragment.appendChild(craetedPin(adverts[i]));
