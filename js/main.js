@@ -1,16 +1,16 @@
 'use strict';
-const TYPE_HOUSE = ['palace', 'flat', 'house', 'bungalow'];
+const TYPE_HOUSE = [`palace`, `flat`, `house`, `bungalow`];
 
-const CHECKIN = ['12:00', '13:00', '14:00'];
+const CHECKIN = [`12:00`, `13:00`, `14:00`];
 
-const CHECKOUT = ['12:00', '13:00', '14:00'];
+const CHECKOUT = [`12:00`, `13:00`, `14:00`];
 
-const FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 
 const PHOTOS = [
-  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+  `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
+  `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
+  `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
 ];
 
 const ADVER_NUMBER = 8;
@@ -24,8 +24,8 @@ const MIN_PIN_X = 0;
 const MIN_PIN_Y = 130;
 const MAX_PIN_Y = 630;
 
-const map = document.querySelector('.map');
-const mapPins = document.querySelector('.map__pins');
+const map = document.querySelector(`.map`);
+const mapPins = document.querySelector(`.map__pins`);
 
 const getShuffle = (array) => {
   let shuffledArray = array.slice();
@@ -50,7 +50,7 @@ const randomLengthArray = (array) => {
   let shuffledArray = getShuffle(array);
   let randomLength = getRandomNumber(0, array.length);
 
-  for(let i = 0; i < randomLength; i++) {
+  for (let i = 0; i < randomLength; i++) {
     let newObj = shuffledArray[i];
     newArray.push(newObj);
   }
@@ -68,8 +68,8 @@ const getAdverts = (number) => {
     const advert = {
       author: {
         avatar: `img/avatars/user0${i}.png`,
-    },
-    offer: {
+      },
+      offer: {
         title: `Заголовок, тут, будет, наверное`,
         address: `${pinX}, ${pinY}`,
         price: Math.round(Math.random() * ROUND_PRICE),
@@ -81,11 +81,11 @@ const getAdverts = (number) => {
         features: randomLengthArray(FEATURES),
         description: `описательное описание`,
         photos: randomLengthArray(PHOTOS)
-    },
-    location: {
+      },
+      location: {
         x: pinX,
         y: pinY
-    }
+      }
     };
     adverts.push(advert);
   }
@@ -94,11 +94,11 @@ const getAdverts = (number) => {
 };
 
 const craetedPin = (advert) => {
-  const pin = document.querySelector('#pin').content.querySelector('.map__pin');
+  const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
   const pinElement = pin.cloneNode(true);
-  const pinImg = pinElement.querySelector('img');
+  const pinImg = pinElement.querySelector(`img`);
 
-  pinElement.style.left = `${advert.location.x - PIN_WIDTH/2}px`;
+  pinElement.style.left = `${advert.location.x - PIN_WIDTH / 2}px`;
   pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
   pinImg.src = advert.author.avatar;
   pinImg.alt = advert.offer.title;
@@ -116,6 +116,6 @@ const renderPins = (adverts) => {
 
 };
 
-map.classList.remove('map--faded');
+map.classList.remove(`map--faded`);
 const adverts = getAdverts(ADVER_NUMBER);
 renderPins(adverts);
