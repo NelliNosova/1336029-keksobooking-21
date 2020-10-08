@@ -25,14 +25,16 @@ const MIN_PIN_X = 0;
 const MIN_PIN_Y = 130;
 const MAX_PIN_Y = 630;
 
-const SPACE = ` `;
+const PHOTO_WIDTH = 45;
+const PHOTO_HEIGHT = 40;
+
 
 const map = document.querySelector(`.map`);
+const filter = document.querySelector(`.map__filters-container`);
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
-const features = card.querySelector(`.popup__features`);
-const featuresItem = features.querySelector(`popup__feature`);
+
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -126,91 +128,87 @@ const renderPins = (adverts) => {
   mapPins.appendChild(fragment);
 };
 
-const createdFeature = (advert) => {
-  const featureElement = document.createElement(`li`);
-  featureElement.className = `popup__feature`;
-
-  if (advert.offer.features === `wifi`) {
-    featureElement.classList.add(`popup__feature--wifi`);
-  } else if (advert.offer.features === `dishwasher`) {
-    featureElement.classList.add(`popup__feature--dishwasher`);
-  } else if (advert.offer.features === `parking`) {
-    featureElement.classList.add(`popup__feature--parking`);
-  } else if (advert.offer.features === `washer`) {
-    featureElement.classList.add(`popup__feature--washer`);
-  } else if (advert.offer.features === `elevator`) {
-    featureElement.classList.add(`popup__feature--elevator`);
-  } else if (advert.offer.features === `conditioner`) {
-    featureElement.classList.add(`popup__feature--conditioner`);
+const renderType = (type) => {
+  if (type === `flat`) {
+    type = `Квартира`;
+  } else if (type === `bungalow`) {
+    type = `Бунгало`;
+  } else if (type === `house`) {
+    type = `Дом`;
+  } else if (type === `palace`) {
+    type = `Дворец`;
   }
 
-  return featureElement;
+  return type;
 };
 
-const renderFeature = (array) => {
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < array.length; i++) {
-    fragment.appendChild(createdFeature(array[i]));
+const renderRoomsHosts = (rooms, guests) => {
+  let stringRoomsHosts = ``;
+
+  if (rooms === 1) {
+    stringRoomsHosts = `${rooms} комната для ${guests} гостей`;
+  } else if (rooms >= 5) {
+    stringRoomsHosts = `${rooms} комнат для ${guests} гостей`;
+  } else {
+    stringRoomsHosts = `${rooms} комнаты для ${guests} гостей`;
   }
 
-  features.appendChild(fragment);
+  return stringRoomsHosts;
 };
+
 
 const createdCard = (advert) => {
   const cardElement = card.cloneNode(true);
-  const title = card.querySelector(`.popup__title`);
-  const address = card.querySelector(`.popup__text--address`);
-  const price = card.querySelector(`.popup__text--price`);
-  const type = card.querySelector(`.popup__type`);
-  const capacity = card.querySelector(`.popup__text--capacity`);
-  const time = card.querySelector(`.popup__text--time`);
-  const description = card.querySelector(`.popup__description`);
+  const title = cardElement.querySelector(`.popup__title`);
+  const address = cardElement.querySelector(`.popup__text--address`);
+  const price = cardElement.querySelector(`.popup__text--price`);
+  const time = cardElement.querySelector(`.popup__text--time`);
+  const description = cardElement.querySelector(`.popup__description`);
+  const features = cardElement.querySelector(`.popup__features`);
+  const type = cardElement.querySelector(`.popup__type`);
+  const capacity = cardElement.querySelector(`.popup__text--capacity`);
+  const photos = cardElement.querySelector(`.popup__photos`);
+  const avatar = cardElement.querySelector(`.popup__avatar`);
 
   title.textContent = advert.offer.title;
   address.textContent = advert.offer.address;
   price.textContent = `${advert.offer.price}₽/ночь`;
-  features.textContent = advert.offer.features;
-  description.textContent = advert.offer.description;
-
-  if (advert.offer.type === `flat`) {
-    type.textContent = `Квартира`;
-  } else if (advert.offer.type === `bungalow`) {
-    type.textContent = `Бунгало`;
-  } else if (advert.offer.type === `house`) {
-    type.textContent = `Дом`;
-  } else if (advert.offer.type === `palace`) {
-    type.textContent = `Дворец`;
-  }
-
-  if (advert.offer.rooms === 1) {
-    capacity.textContent = `${advert.offer.rooms} комната для ${advert.offer.guests} гостей`;
-  } else if (advert.offer.rooms >= 5) {
-    capacity.textContent = `${advert.offer.rooms} комнат для ${advert.offer.guests} гостей`;
-  } else {
-    capacity.textContent = `${advert.offer.rooms} комнаты для ${advert.offer.guests} гостей`;
-  }
-
   time.textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
+  description.textContent = advert.offer.description;
+  type.textContent = renderType(advert.offer.type);
+  capacity.textContent = renderRoomsHosts(advert.offer.rooms, advert.offer.guests);
+  avatar.src = advert.author.avatar;
 
+  features.innerHTML = ``;
+  photos.innerHTML = ``;
+
+  for (let i = 0; i < advert.offer.features.length; i++) {
+    const featureElement = document.createElement(`li`);
+    featureElement.className = `popup__feature`;
+    featureElement.classList.add(`popup__feature--${advert.offer.features[i]}`);
+    features.appendChild(featureElement);
+  }
+
+  for (let i = 0; i < advert.offer.photos.length; i++) {
+    const photoElement = document.createElement(`img`);
+    photoElement.width = PHOTO_WIDTH;
+    photoElement.height = PHOTO_HEIGHT;
+    photos.style.display = `flex`;
+    photos.style.justifyContent = `space-around`;
+    photoElement.src = advert.offer.photos[i];
+    photoElement.alt = `Фото объекта`;
+    photos.appendChild(photoElement);
+  }
 
   return cardElement;
 };
 
-const renderCard = (adverts) => {
-  const fragment = document.createDocumentFragment();
-
-  fragment.appendChild(createdCard(adverts[0]));
-  mapPins.insertAdjacentHTML(`afterend`, fragment);
+const renderCard = (advert) => {
+  const newCard = createdCard(advert);
+  map.insertBefore(newCard, filter);
 };
 
 map.classList.remove(`map--faded`);
 const adverts = getAdverts(ADVERT_NUMBER);
 renderPins(adverts);
-renderFeature(adverts);
-renderCard(adverts);
-
-
-// В список .popup__features выведите все доступные удобства в объявлении.
-// В блок .popup__photos выведите все фотографии из списка offer.photos. Каждая из строк массива photos должна записываться как src соответствующего изображения.
-// Замените src у аватарки пользователя — изображения, которое записано в .popup__avatar — на значения поля author.avatar отрисовываемого объекта.
-// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается.
+renderCard(adverts[0]);
