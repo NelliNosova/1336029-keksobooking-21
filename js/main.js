@@ -31,10 +31,40 @@ const PHOTO_HEIGHT = 40;
 
 const map = document.querySelector(`.map`);
 const filter = document.querySelector(`.map__filters-container`);
+const filterForm = filter.querySelector(`.map__filters`);
+const filterFormSelects = filterForm.querySelectorAll(`select`);
+const filterFormFieldsets = filterForm.querySelectorAll(`fieldset`);
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
+const advertForm = document.querySelector(`.ad-form`);
+const advertFormFieldsets = advertForm.querySelectorAll(`fieldset`);
+const pinMain = document.querySelector(`.map__pin--main`);
 
+
+const addDisabled = (array) => {
+  for (let elem of array) {
+    elem.setAttribute(`disabled`, ``);
+  }
+};
+
+const removeDisabled = (array) => {
+  for (let elem of array) {
+    elem.removeAttribute(`disabled`);
+  }
+};
+
+const getActive = () => {
+  pinMain.addEventListener(`mousedown`, (evt) => {
+    if (evt.which === 1) {
+      map.classList.remove(`map--faded`);
+      advertForm.classList.remove(`ad-form--disabled`);
+      removeDisabled(advertFormFieldsets);
+      removeDisabled(filterFormSelects);
+      removeDisabled(filterFormFieldsets);
+    }
+  });
+};
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -160,7 +190,6 @@ const defineRoomsHosts = (rooms, guests) => {
   return stringRoomsHosts;
 };
 
-
 const createdCard = (advert) => {
   const {author, offer} = advert;
   const {avatar} = author;
@@ -226,7 +255,12 @@ const renderCard = (advert) => {
   map.insertBefore(newCard, filter);
 };
 
-map.classList.remove(`map--faded`);
+
 const adverts = getAdverts(ADVERT_NUMBER);
+addDisabled(advertFormFieldsets);
+addDisabled(filterFormSelects);
+addDisabled(filterFormFieldsets);
+getActive();
 renderPins(adverts);
-renderCard(adverts[0]);
+
+// renderCard(adverts[0]);
