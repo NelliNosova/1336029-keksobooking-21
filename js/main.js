@@ -1,6 +1,24 @@
 'use strict';
 
-const TYPE_HOUSE = [`palace`, `flat`, `house`, `bungalow`];
+const TYPE_HOUSE = [
+  {
+    type: `palace`,
+    minPrice: `10000`
+  },
+  {
+    type: `flat`,
+    minPrice: `5000`
+  },
+  {
+    type: `house`,
+    minPrice: `1000`
+  },
+  {
+    type: `bungalow`,
+    minPrice: `0`
+  }
+];
+
 
 const CHECKIN = [`12:00`, `13:00`, `14:00`];
 
@@ -18,6 +36,7 @@ const ADVERT_NUMBER = 8;
 const ROUND_PRICE = 10000;
 const MIN_PHYS_OBJ = 1;
 const MAX_GUESTS = 20;
+const MAX_PRICE = 1000000;
 
 const NEW_PIN_SIZE = 65;
 const PIN_WIDTH = 50;
@@ -28,6 +47,9 @@ const MAX_PIN_Y = 630;
 
 const PHOTO_WIDTH = 45;
 const PHOTO_HEIGHT = 40;
+
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
 
 
 const map = document.querySelector(`.map`);
@@ -44,8 +66,43 @@ const advertForm = document.querySelector(`.ad-form`);
 const advertRoomNumber = advertForm.querySelector(`#room_number`);
 const advertCapacityNumber = advertForm.querySelector(`#capacity`);
 const advertAddress = advertForm.querySelector(`#address`);
+const advertTitle = advertForm.querySelector(`#title`);
+const advertPrice = advertForm.querySelector(`#price`);
+const advertType = advertForm.querySelector(`#type`);
+const advertTimein = advertForm.querySelector(`#timein`);
+const advertTimeout = advertForm.querySelector(`#timeout`);
 const advertFormFieldsets = advertForm.querySelectorAll(`fieldset`);
 const pinMain = document.querySelector(`.map__pin--main`);
+
+advertForm.addEventListener(`input`, (evt) => {
+  const valueLength = evt.target.value.length;
+  if (evt.target === advertTitle && valueLength < MIN_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
+  } else if (evt.target === advertTitle && valueLength > MAX_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
+  } else if (evt.target === advertPrice && advertPrice.value > MAX_PRICE) {
+    evt.target.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}`);
+  } else if (evt.target === advertTimein) {
+    advertTimeout.value = advertTimein.value;
+  } else if (evt.target === advertTimeout) {
+    advertTimein.value = advertTimeout.value;
+  } else {
+    evt.target.setCustomValidity(``);
+  }
+
+
+  for (let i = 0; i < TYPE_HOUSE.length; i++) {
+    if (evt.target.value === TYPE_HOUSE[i].type) {
+      advertPrice.placeholder = TYPE_HOUSE[i].minPrice;
+    }
+    if (evt.target.value === TYPE_HOUSE[i].type && advertPrice.value < TYPE_HOUSE[i].minPrice) {
+      advertPrice.min = TYPE_HOUSE[i].minPrice;
+      advertPrice.setCustomValidity(`Минимальная цена для выбранного типа ${TYPE_HOUSE[i].minPrice}`);
+    }
+  }
+
+
+});
 
 advertForm.addEventListener(`submit`, (evt) => {
   evt.preventDefault();
@@ -55,6 +112,9 @@ advertForm.addEventListener(`submit`, (evt) => {
   } else {
     advertCapacityNumber.setCustomValidity(``);
     advertForm.submit();
+  }
+  if (advertTitle.value.length < 20) {
+
   }
 });
 
@@ -275,10 +335,7 @@ const getNewAddress = () => {
   const newAddressCoorX = Math.round(pinAddressCoor.x - NEW_PIN_SIZE / 2);
   const newAddressCoorY = Math.round(pinAddressCoor.y - NEW_PIN_SIZE);
   advertAddress.value = `${newAddressCoorX}, ${newAddressCoorY}`;
-};
-
-const getValidityRoom = () => {
-
+  advertAddress.disabled = true;
 };
 
 pinMain.addEventListener(`mousedown`, (evt) => {
