@@ -41,10 +41,22 @@ const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
 const advertForm = document.querySelector(`.ad-form`);
-const formAddress = advertForm.querySelector(`#address`);
+const advertRoomNumber = advertForm.querySelector(`#room_number`);
+const advertCapacityNumber = advertForm.querySelector(`#capacity`);
+const advertAddress = advertForm.querySelector(`#address`);
 const advertFormFieldsets = advertForm.querySelectorAll(`fieldset`);
 const pinMain = document.querySelector(`.map__pin--main`);
 
+advertForm.addEventListener(`submit`, (evt) => {
+  evt.preventDefault();
+  evt.stopPropagation();
+  if (advertCapacityNumber.value !== advertRoomNumber.value) {
+    advertCapacityNumber.setCustomValidity(`Количество гостей должно ровняться количеству комнат`);
+  } else {
+    advertCapacityNumber.setCustomValidity(``);
+    advertForm.submit();
+  }
+});
 
 const addDisabled = (array) => {
   for (let elem of array) {
@@ -259,10 +271,14 @@ const getFormActive = (evt) => {
 };
 
 const getNewAddress = () => {
-  const pinAddressCoor = formAddress.getBoundingClientRect();
+  const pinAddressCoor = advertAddress.getBoundingClientRect();
   const newAddressCoorX = Math.round(pinAddressCoor.x - NEW_PIN_SIZE / 2);
   const newAddressCoorY = Math.round(pinAddressCoor.y - NEW_PIN_SIZE);
-  formAddress.value = `${newAddressCoorX}, ${newAddressCoorY}`;
+  advertAddress.value = `${newAddressCoorX}, ${newAddressCoorY}`;
+};
+
+const getValidityRoom = () => {
+
 };
 
 pinMain.addEventListener(`mousedown`, (evt) => {
