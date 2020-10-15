@@ -19,6 +19,7 @@ const ROUND_PRICE = 10000;
 const MIN_PHYS_OBJ = 1;
 const MAX_GUESTS = 20;
 
+const NEW_PIN_SIZE = 65;
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 const MIN_PIN_X = 0;
@@ -34,10 +35,13 @@ const filter = document.querySelector(`.map__filters-container`);
 const filterForm = filter.querySelector(`.map__filters`);
 const filterFormSelects = filterForm.querySelectorAll(`select`);
 const filterFormFieldsets = filterForm.querySelectorAll(`fieldset`);
+
+
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
 const advertForm = document.querySelector(`.ad-form`);
+const formAddress = advertForm.querySelector(`#address`);
 const advertFormFieldsets = advertForm.querySelectorAll(`fieldset`);
 const pinMain = document.querySelector(`.map__pin--main`);
 
@@ -54,17 +58,6 @@ const removeDisabled = (array) => {
   }
 };
 
-const getActive = () => {
-  pinMain.addEventListener(`mousedown`, (evt) => {
-    if (evt.which === 1) {
-      map.classList.remove(`map--faded`);
-      advertForm.classList.remove(`ad-form--disabled`);
-      removeDisabled(advertFormFieldsets);
-      removeDisabled(filterFormSelects);
-      removeDisabled(filterFormFieldsets);
-    }
-  });
-};
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -255,12 +248,33 @@ const renderCard = (advert) => {
   map.insertBefore(newCard, filter);
 };
 
+const getFormActive = (evt) => {
+  if (evt.which === 1) {
+    map.classList.remove(`map--faded`);
+    advertForm.classList.remove(`ad-form--disabled`);
+    removeDisabled(advertFormFieldsets);
+    removeDisabled(filterFormSelects);
+    removeDisabled(filterFormFieldsets);
+  }
+};
+
+const getNewAddress = () => {
+  const pinAddressCoor = formAddress.getBoundingClientRect();
+  const newAddressCoorX = Math.round(pinAddressCoor.x - NEW_PIN_SIZE / 2);
+  const newAddressCoorY = Math.round(pinAddressCoor.y - NEW_PIN_SIZE);
+  formAddress.value = `${newAddressCoorX}, ${newAddressCoorY}`;
+};
+
+pinMain.addEventListener(`mousedown`, (evt) => {
+  getFormActive(evt);
+  getNewAddress();
+});
 
 const adverts = getAdverts(ADVERT_NUMBER);
+getNewAddress();
 addDisabled(advertFormFieldsets);
 addDisabled(filterFormSelects);
 addDisabled(filterFormFieldsets);
-getActive();
 renderPins(adverts);
 
 // renderCard(adverts[0]);
