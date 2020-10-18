@@ -38,7 +38,8 @@ const MIN_PHYS_OBJ = 1;
 const MAX_GUESTS = 20;
 const MAX_PRICE = 1000000;
 
-const NEW_PIN_SIZE = 65;
+const MAIN_PIN_SIZE = 65;
+const MAIN_PIN_TAIL = 22;
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 const MIN_PIN_X = 0;
@@ -55,8 +56,8 @@ const MAX_TITLE_LENGTH = 100;
 const map = document.querySelector(`.map`);
 const filter = document.querySelector(`.map__filters-container`);
 const filterForm = filter.querySelector(`.map__filters`);
-const filterFormSelects = filterForm.querySelectorAll(`select`);
-const filterFormFieldsets = filterForm.querySelectorAll(`fieldset`);
+const formSelects = document.querySelectorAll(`select`);
+const formFieldsets = document.querySelectorAll(`fieldset`);
 
 
 const mapPins = document.querySelector(`.map__pins`);
@@ -71,65 +72,8 @@ const advertPrice = advertForm.querySelector(`#price`);
 const advertType = advertForm.querySelector(`#type`);
 const advertTimein = advertForm.querySelector(`#timein`);
 const advertTimeout = advertForm.querySelector(`#timeout`);
-const advertFormFieldsets = advertForm.querySelectorAll(`fieldset`);
+
 const pinMain = document.querySelector(`.map__pin--main`);
-
-advertForm.addEventListener(`input`, (evt) => {
-  const valueLength = evt.target.value.length;
-  if (evt.target === advertTitle && valueLength < MIN_TITLE_LENGTH) {
-    evt.target.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
-  } else if (evt.target === advertTitle && valueLength > MAX_TITLE_LENGTH) {
-    evt.target.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
-  } else if (evt.target === advertPrice && advertPrice.value > MAX_PRICE) {
-    evt.target.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}`);
-  } else if (evt.target === advertTimein) {
-    advertTimeout.value = advertTimein.value;
-  } else if (evt.target === advertTimeout) {
-    advertTimein.value = advertTimeout.value;
-  } else {
-    evt.target.setCustomValidity(``);
-  }
-
-
-  for (let i = 0; i < TYPE_HOUSE.length; i++) {
-    if (evt.target.value === TYPE_HOUSE[i].type) {
-      advertPrice.placeholder = TYPE_HOUSE[i].minPrice;
-    }
-    if (evt.target.value === TYPE_HOUSE[i].type && advertPrice.value < TYPE_HOUSE[i].minPrice) {
-      advertPrice.min = TYPE_HOUSE[i].minPrice;
-      advertPrice.setCustomValidity(`Минимальная цена для выбранного типа ${TYPE_HOUSE[i].minPrice}`);
-    }
-  }
-
-
-});
-
-advertForm.addEventListener(`submit`, (evt) => {
-  evt.preventDefault();
-  evt.stopPropagation();
-  if (advertCapacityNumber.value !== advertRoomNumber.value) {
-    advertCapacityNumber.setCustomValidity(`Количество гостей должно ровняться количеству комнат`);
-  } else {
-    advertCapacityNumber.setCustomValidity(``);
-    advertForm.submit();
-  }
-  if (advertTitle.value.length < 20) {
-
-  }
-});
-
-const addDisabled = (array) => {
-  for (let elem of array) {
-    elem.setAttribute(`disabled`, ``);
-  }
-};
-
-const removeDisabled = (array) => {
-  for (let elem of array) {
-    elem.removeAttribute(`disabled`);
-  }
-};
-
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -320,34 +264,95 @@ const renderCard = (advert) => {
   map.insertBefore(newCard, filter);
 };
 
-const getFormActive = (evt) => {
-  if (evt.which === 1) {
-    map.classList.remove(`map--faded`);
-    advertForm.classList.remove(`ad-form--disabled`);
-    removeDisabled(advertFormFieldsets);
-    removeDisabled(filterFormSelects);
-    removeDisabled(filterFormFieldsets);
-  }
+const activatePage = () => {
+  map.classList.remove(`map--faded`);
+  advertForm.classList.remove(`ad-form--disabled`);
+  toggleFormElememtsState(formFieldsets, false);
+  toggleFormElememtsState(formSelects, false);
+  renderPins(adverts);
+  getMainPinAddress();
+
 };
 
-const getNewAddress = () => {
-  const pinAddressCoor = advertAddress.getBoundingClientRect();
-  const newAddressCoorX = Math.round(pinAddressCoor.x - NEW_PIN_SIZE / 2);
-  const newAddressCoorY = Math.round(pinAddressCoor.y - NEW_PIN_SIZE);
-  advertAddress.value = `${newAddressCoorX}, ${newAddressCoorY}`;
+const deactivatePage = () => {};
+
+const getMainPinAddress = () => {
+  const pinAddressCoord = advertAddress.getBoundingClientRect();
+  const newAddressCoordX = Math.round(pinAddressCoord.top - MAIN_PIN_SIZE / 2);
+  const newAddressCoordY = Math.round(pinAddressCoord.left + MAIN_PIN_SIZE + MAIN_PIN_TAIL);
+  advertAddress.value = `${newAddressCoordX}, ${newAddressCoordY}`;
   advertAddress.disabled = true;
 };
 
+const toggleFormElememtsState = (nodes, state) => {
+  for (let elem of nodes) {
+    elem.disabled = state;
+  }
+};
+
+const disabledingRoom = () => {
+  const roomArray = Array.from(advertCapacityNumber);
+  const lastElemRoom = roomArray[roomArray.length - 1];
+  const reversRoomArray = roomArray.reverse().slice(1);
+
+  reversRoomArray.push(lastElemRoom);
+  toggleFormElememtsState(reversRoomArray, false);
+  const passRoomArray = reversRoomArray.slice(advertRoomNumber.value);
+  toggleFormElememtsState(passRoomArray, true);
+
+  if (advertRoomNumber.value === `100`) {
+    toggleFormElememtsState(reversRoomArray.slice(0, reversRoomArray.length - 1), true);
+  }
+};
+
 pinMain.addEventListener(`mousedown`, (evt) => {
-  getFormActive(evt);
-  getNewAddress();
+  if (evt.button === 0) {
+    activatePage();
+  }
+});
+
+window.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    activatePage();
+  }
+});
+
+advertForm.addEventListener(`input`, (evt) => {
+  const valueLength = evt.target.value.length;
+  if (evt.target === advertTitle && valueLength < MIN_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
+  } else if (evt.target === advertTitle && valueLength > MAX_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
+  } else if (evt.target === advertPrice && advertPrice.value > MAX_PRICE) {
+    evt.target.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}`);
+  } else if (evt.target === advertTimein) {
+    advertTimeout.value = advertTimein.value;
+  } else if (evt.target === advertTimeout) {
+    advertTimein.value = advertTimeout.value;
+  } else if (evt.target === advertRoomNumber) {
+    disabledingRoom();
+  } else {
+    evt.target.setCustomValidity(``);
+  }
+
+
+  for (let i = 0; i < TYPE_HOUSE.length; i++) {
+    if (evt.target.value === TYPE_HOUSE[i].type) {
+      advertPrice.placeholder = TYPE_HOUSE[i].minPrice;
+    }
+    if (evt.target.value === TYPE_HOUSE[i].type && advertPrice.value < TYPE_HOUSE[i].minPrice) {
+      advertPrice.min = TYPE_HOUSE[i].minPrice;
+      advertPrice.setCustomValidity(`Минимальная цена для выбранного типа ${TYPE_HOUSE[i].minPrice}`);
+    }
+  }
 });
 
 const adverts = getAdverts(ADVERT_NUMBER);
-getNewAddress();
-addDisabled(advertFormFieldsets);
-addDisabled(filterFormSelects);
-addDisabled(filterFormFieldsets);
-renderPins(adverts);
+getMainPinAddress();
+toggleFormElememtsState(formFieldsets, true);
+toggleFormElememtsState(formSelects, true);
+disabledingRoom();
 
 // renderCard(adverts[0]);
+
+
