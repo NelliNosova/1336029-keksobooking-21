@@ -1,6 +1,24 @@
 'use strict';
 
-const TYPE_HOUSE = [`palace`, `flat`, `house`, `bungalow`];
+const TYPE_HOUSE = [
+  {
+    type: `palace`,
+    minPrice: `10000`
+  },
+  {
+    type: `flat`,
+    minPrice: `5000`
+  },
+  {
+    type: `house`,
+    minPrice: `1000`
+  },
+  {
+    type: `bungalow`,
+    minPrice: `0`
+  }
+];
+
 
 const CHECKIN = [`12:00`, `13:00`, `14:00`];
 
@@ -18,7 +36,10 @@ const ADVERT_NUMBER = 8;
 const ROUND_PRICE = 10000;
 const MIN_PHYS_OBJ = 1;
 const MAX_GUESTS = 20;
+const MAX_PRICE = 1000000;
 
+const MAIN_PIN_SIZE = 65;
+const MAIN_PIN_TAIL = 22;
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 const MIN_PIN_X = 0;
@@ -28,13 +49,33 @@ const MAX_PIN_Y = 630;
 const PHOTO_WIDTH = 45;
 const PHOTO_HEIGHT = 40;
 
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+
 
 const map = document.querySelector(`.map`);
 const filter = document.querySelector(`.map__filters-container`);
+const filterForm = filter.querySelector(`.map__filters`);
+const formSelects = document.querySelectorAll(`select`);
+const formFieldsets = document.querySelectorAll(`fieldset`);
+
+
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
+const advertForm = document.querySelector(`.ad-form`);
+const advertRoomNumber = advertForm.querySelector(`#room_number`);
+const advertCapacityNumber = advertForm.querySelector(`#capacity`);
+const advertAddress = advertForm.querySelector(`#address`);
+const advertTitle = advertForm.querySelector(`#title`);
+const advertPrice = advertForm.querySelector(`#price`);
+const advertType = advertForm.querySelector(`#type`);
+const advertTimein = advertForm.querySelector(`#timein`);
+const advertTimeout = advertForm.querySelector(`#timeout`);
 
+const pinMain = document.querySelector(`.map__pin--main`);
+
+let pageActive = false;
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -160,7 +201,6 @@ const defineRoomsHosts = (rooms, guests) => {
   return stringRoomsHosts;
 };
 
-
 const createdCard = (advert) => {
   const {author, offer} = advert;
   const {avatar} = author;
@@ -226,7 +266,109 @@ const renderCard = (advert) => {
   map.insertBefore(newCard, filter);
 };
 
-map.classList.remove(`map--faded`);
+const activatePage = () => {
+  pageActive = true;
+  map.classList.remove(`map--faded`);
+  advertForm.classList.remove(`ad-form--disabled`);
+  toggleFormElememtsState(formFieldsets, false);
+  toggleFormElememtsState(formSelects, false);
+  renderPins(adverts);
+  getMainPinAddress();
+};
+
+const deactivatePage = () => {
+  pageActive = false;
+  map.classList.add(`map--faded`);
+  advertForm.classList.add(`ad-form--disabled`);
+  toggleFormElememtsState(formFieldsets, true);
+  toggleFormElememtsState(formSelects, true);
+
+};
+
+const getMainPinAddress = () => {
+  const pinAddressCoord = pinMain.getBoundingClientRect();
+  let mainAddressCoordX = 0;
+  let mainAddressCoordY = 0;
+  if (pageActive) {
+    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
+    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE + MAIN_PIN_TAIL);
+    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
+  } else {
+    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
+    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE / 2);
+    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
+  }
+};
+
+const toggleFormElememtsState = (nodes, state) => {
+  for (let elem of nodes) {
+    elem.disabled = state;
+  }
+};
+
+const disabledingRoom = () => {
+  const roomArray = Array.from(advertCapacityNumber);
+  const lastElemRoom = roomArray[roomArray.length - 1];
+  const reversRoomArray = roomArray.reverse().slice(1);
+
+  reversRoomArray.push(lastElemRoom);
+  toggleFormElememtsState(reversRoomArray, false);
+  const passRoomArray = reversRoomArray.slice(advertRoomNumber.value);
+  toggleFormElememtsState(passRoomArray, true);
+
+  if (advertRoomNumber.value === `100`) {
+    toggleFormElememtsState(reversRoomArray.slice(0, reversRoomArray.length - 1), true);
+  }
+};
+
+pinMain.addEventListener(`mousedown`, (evt) => {
+  if (evt.button === 0) {
+    activatePage();
+  }
+});
+
+window.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    activatePage();
+  }
+});
+
+advertForm.addEventListener(`input`, (evt) => {
+  const valueLength = evt.target.value.length;
+  if (evt.target === advertTitle && valueLength < MIN_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
+  } else if (evt.target === advertTitle && valueLength > MAX_TITLE_LENGTH) {
+    evt.target.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
+  } else if (evt.target === advertPrice && advertPrice.value > MAX_PRICE) {
+    evt.target.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}`);
+  } else if (evt.target === advertTimein) {
+    advertTimeout.value = advertTimein.value;
+  } else if (evt.target === advertTimeout) {
+    advertTimein.value = advertTimeout.value;
+  } else if (evt.target === advertRoomNumber) {
+    disabledingRoom();
+  } else {
+    evt.target.setCustomValidity(``);
+  }
+
+
+  for (let i = 0; i < TYPE_HOUSE.length; i++) {
+    if (evt.target.value === TYPE_HOUSE[i].type) {
+      advertPrice.placeholder = TYPE_HOUSE[i].minPrice;
+    }
+    if (evt.target.value === TYPE_HOUSE[i].type && advertPrice.value < TYPE_HOUSE[i].minPrice) {
+      advertPrice.min = TYPE_HOUSE[i].minPrice;
+      advertPrice.setCustomValidity(`Минимальная цена для выбранного типа ${TYPE_HOUSE[i].minPrice}`);
+    }
+  }
+});
+
 const adverts = getAdverts(ADVERT_NUMBER);
-renderPins(adverts);
-renderCard(adverts[0]);
+getMainPinAddress();
+toggleFormElememtsState(formFieldsets, true);
+toggleFormElememtsState(formSelects, true);
+disabledingRoom();
+
+// renderCard(adverts[0]);
+
+
