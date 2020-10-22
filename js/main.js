@@ -75,7 +75,7 @@ const advertTimeout = advertForm.querySelector(`#timeout`);
 
 const pinMain = document.querySelector(`.map__pin--main`);
 
-let pageActive = false;
+let isPageActive = false;
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -267,7 +267,7 @@ const renderCard = (advert) => {
 };
 
 const activatePage = () => {
-  pageActive = true;
+  isPageActive = true;
   map.classList.remove(`map--faded`);
   advertForm.classList.remove(`ad-form--disabled`);
   toggleFormElememtsState(formFieldsets, false);
@@ -277,7 +277,7 @@ const activatePage = () => {
 };
 
 const deactivatePage = () => {
-  pageActive = false;
+  isPageActive = false;
   map.classList.add(`map--faded`);
   advertForm.classList.add(`ad-form--disabled`);
   toggleFormElememtsState(formFieldsets, true);
@@ -286,18 +286,12 @@ const deactivatePage = () => {
 };
 
 const getMainPinAddress = () => {
-  const pinAddressCoord = pinMain.getBoundingClientRect();
-  let mainAddressCoordX = 0;
-  let mainAddressCoordY = 0;
-  if (pageActive) {
-    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
-    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE + MAIN_PIN_TAIL);
-    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
-  } else {
-    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
-    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE / 2);
-    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
-  }
+  const pinX = parseInt(pinMain.style.left, 10);
+  const pinY = parseInt(pinMain.style.top, 10);
+
+  const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
+  const y = Math.round(isPageActive ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2);
+  advertAddress.value = `${x}, ${y}`;
 };
 
 const toggleFormElememtsState = (nodes, state) => {
