@@ -59,7 +59,6 @@ const filterForm = filter.querySelector(`.map__filters`);
 const formSelects = document.querySelectorAll(`select`);
 const formFieldsets = document.querySelectorAll(`fieldset`);
 
-
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
@@ -76,6 +75,8 @@ const advertTimeout = advertForm.querySelector(`#timeout`);
 const pinMain = document.querySelector(`.map__pin--main`);
 
 let isPageActive = false;
+
+
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -163,10 +164,13 @@ const renderPins = (adverts) => {
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < adverts.length; i++) {
-    fragment.appendChild(createPin(adverts[i]));
+    const newElement = createPin(adverts[i]);
+    newElement.setAttribute(`data-id`, i);
+    fragment.appendChild(newElement);
   }
 
   mapPins.appendChild(fragment);
+
 };
 
 const defineType = (type) => {
@@ -235,7 +239,7 @@ const createdCard = (advert) => {
   priceElement.textContent = `${price}₽/ночь`;
   timeElement.textContent = `Заезд после ${checkin}, выезд до ${checkout}`;
   descriptionElement.textContent = description;
-  typeElement.textContent = defineType(type);
+  typeElement.textContent = defineType(type.type);
   capacityElement.textContent = defineRoomsHosts(rooms, guests);
   avatarElement.src = avatar;
 
@@ -262,8 +266,52 @@ const createdCard = (advert) => {
 };
 
 const renderCard = (advert) => {
+  const openedCard = map.querySelector(`.popup`);
+  if (openedCard) {
+    openedCard.remove();
+  }
+
   const newCard = createdCard(advert);
   map.insertBefore(newCard, filter);
+  closeCard();
+};
+
+
+const openCard = () => {
+  mapPins.addEventListener(`mousedown`, (evt) => {
+    if (evt.target.closest(`button[data-id]`)) {
+      const indexForCard = evt.target.closest(`button[data-id]`).getAttribute(`data-id`);
+      renderCard(adverts[indexForCard]);
+    }
+  });
+
+  mapPins.addEventListener(`keydown`, (evt) => {
+    if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
+      const indexForCard = evt.target.closest(`button[data-id]`).getAttribute(`data-id`);
+      renderCard(adverts[indexForCard]);
+    }
+  });
+
+};
+
+const closeCard = () => {
+  const openedCard = map.querySelector(`.popup`);
+  const closeCardButton = map.querySelector(`.popup__close`);
+  closeCardButton.addEventListener(`mousedown`, () => {
+    openedCard.remove();
+  });
+
+  closeCardButton.addEventListener(`keydown`, (evt) => {
+    if (evt.key === `Enter`) {
+      openedCard.remove();
+    }
+  });
+
+  window.addEventListener(`keydown`, (evt) => {
+    if (evt.key === `Escape`) {
+      openedCard.remove();
+    }
+  });
 };
 
 const activatePage = () => {
@@ -362,7 +410,7 @@ getMainPinAddress();
 toggleFormElememtsState(formFieldsets, true);
 toggleFormElememtsState(formSelects, true);
 disabledingRoom();
+openCard();
 
-// renderCard(adverts[0]);
 
 
