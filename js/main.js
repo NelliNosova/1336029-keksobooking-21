@@ -76,8 +76,6 @@ const pinMain = document.querySelector(`.map__pin--main`);
 
 let isPageActive = false;
 
-
-
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
 
@@ -134,7 +132,8 @@ const getAdverts = (number) => {
         checkout: getRandomIndex(CHECKOUT),
         features: getRandomLengthArray(FEATURES),
         description: `описательное описание`,
-        photos: getRandomLengthArray(PHOTOS)
+        photos: getRandomLengthArray(PHOTOS),
+        offerId: `a${i - 1}`
       },
       location: {
         x: pinX,
@@ -156,7 +155,7 @@ const createPin = (advert) => {
   pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
   pinImg.src = advert.author.avatar;
   pinImg.alt = advert.offer.title;
-
+  pinElement.dataset.id = advert.offer.offerId;
   return pinElement;
 };
 
@@ -164,8 +163,8 @@ const renderPins = (adverts) => {
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < adverts.length; i++) {
+
     const newElement = createPin(adverts[i]);
-    newElement.setAttribute(`data-id`, i);
     fragment.appendChild(newElement);
   }
 
@@ -267,6 +266,7 @@ const createdCard = (advert) => {
 
 const renderCard = (advert) => {
   const openedCard = map.querySelector(`.popup`);
+
   if (openedCard) {
     openedCard.remove();
   }
@@ -276,52 +276,54 @@ const renderCard = (advert) => {
   closeCard();
 };
 
-
-const openCard = () => {
-  mapPins.addEventListener(`mousedown`, (evt) => {
-    if (evt.target.closest(`button[data-id]`)) {
-      const indexForCard = evt.target.closest(`button[data-id]`).getAttribute(`data-id`);
-      renderCard(adverts[indexForCard]);
-    }
+const openCard = (evt) => {
+  const buttonId = evt.target.closest(`button[data-id]`).dataset.id;
+  const currentOffer = adverts.find((advert) => {
+    return advert.offer.offerId === buttonId;
   });
 
-  mapPins.addEventListener(`keydown`, (evt) => {
-    if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
-      const indexForCard = evt.target.closest(`button[data-id]`).getAttribute(`data-id`);
-      renderCard(adverts[indexForCard]);
-    }
-  });
-
+  renderCard(currentOffer);
 };
 
 const closeCard = () => {
   const openedCard = map.querySelector(`.popup`);
-  const closeCardButton = map.querySelector(`.popup__close`);
-  closeCardButton.addEventListener(`mousedown`, () => {
+  const closeCardButton = openedCard.querySelector(`.popup__close`);
+
+  const pressEscToCloseCard = (evt) => {
+    if (evt.key === `Escape`) {
+      removeCard();
+    }
+  };
+
+  const removeCard = () => {
     openedCard.remove();
+    document.removeEventListener(`keydown`, pressEscToCloseCard);
+  };
+
+  closeCardButton.addEventListener(`mousedown`, () => {
+    removeCard();
   });
 
   closeCardButton.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter`) {
-      openedCard.remove();
+      removeCard();
     }
   });
 
-  window.addEventListener(`keydown`, (evt) => {
-    if (evt.key === `Escape`) {
-      openedCard.remove();
-    }
-  });
+  document.addEventListener(`keydown`, pressEscToCloseCard);
 };
 
 const activatePage = () => {
-  isPageActive = true;
-  map.classList.remove(`map--faded`);
-  advertForm.classList.remove(`ad-form--disabled`);
-  toggleFormElememtsState(formFieldsets, false);
-  toggleFormElememtsState(formSelects, false);
-  renderPins(adverts);
-  getMainPinAddress();
+  if (!isPageActive) {
+    isPageActive = true;
+    map.classList.remove(`map--faded`);
+    advertForm.classList.remove(`ad-form--disabled`);
+    toggleFormElememtsState(formFieldsets, false);
+    toggleFormElememtsState(formSelects, false);
+    renderPins(adverts);
+    getMainPinAddress();
+  }
+
 };
 
 const deactivatePage = () => {
@@ -369,7 +371,7 @@ pinMain.addEventListener(`mousedown`, (evt) => {
   }
 });
 
-window.addEventListener(`keydown`, (evt) => {
+pinMain.addEventListener(`keydown`, (evt) => {
   if (evt.key === `Enter`) {
     activatePage();
   }
@@ -405,12 +407,22 @@ advertForm.addEventListener(`input`, (evt) => {
   }
 });
 
+mapPins.addEventListener(`mousedown`, (evt) => {
+  if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
+    openCard(evt);
+  }
+});
+
+mapPins.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
+    openCard(evt);
+  }
+});
+
 const adverts = getAdverts(ADVERT_NUMBER);
+
+
 getMainPinAddress();
 toggleFormElememtsState(formFieldsets, true);
 toggleFormElememtsState(formSelects, true);
 disabledingRoom();
-openCard();
-
-
-
