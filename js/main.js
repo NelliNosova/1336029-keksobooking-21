@@ -59,7 +59,6 @@ const filterForm = filter.querySelector(`.map__filters`);
 const formSelects = document.querySelectorAll(`select`);
 const formFieldsets = document.querySelectorAll(`fieldset`);
 
-
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
@@ -75,7 +74,7 @@ const advertTimeout = advertForm.querySelector(`#timeout`);
 
 const pinMain = document.querySelector(`.map__pin--main`);
 
-let pageActive = false;
+let isPageActive = false;
 
 const getShuffle = (array) => {
   const shuffledArray = array.slice();
@@ -133,7 +132,8 @@ const getAdverts = (number) => {
         checkout: getRandomIndex(CHECKOUT),
         features: getRandomLengthArray(FEATURES),
         description: `описательное описание`,
-        photos: getRandomLengthArray(PHOTOS)
+        photos: getRandomLengthArray(PHOTOS),
+        offerId: `a${i - 1}`
       },
       location: {
         x: pinX,
@@ -155,7 +155,7 @@ const createPin = (advert) => {
   pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
   pinImg.src = advert.author.avatar;
   pinImg.alt = advert.offer.title;
-
+  pinElement.dataset.id = advert.offer.offerId;
   return pinElement;
 };
 
@@ -163,10 +163,13 @@ const renderPins = (adverts) => {
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < adverts.length; i++) {
-    fragment.appendChild(createPin(adverts[i]));
+
+    const newElement = createPin(adverts[i]);
+    fragment.appendChild(newElement);
   }
 
   mapPins.appendChild(fragment);
+
 };
 
 const defineType = (type) => {
@@ -235,7 +238,7 @@ const createdCard = (advert) => {
   priceElement.textContent = `${price}₽/ночь`;
   timeElement.textContent = `Заезд после ${checkin}, выезд до ${checkout}`;
   descriptionElement.textContent = description;
-  typeElement.textContent = defineType(type);
+  typeElement.textContent = defineType(type.type);
   capacityElement.textContent = defineRoomsHosts(rooms, guests);
   avatarElement.src = avatar;
 
@@ -262,22 +265,69 @@ const createdCard = (advert) => {
 };
 
 const renderCard = (advert) => {
+  const openedCard = map.querySelector(`.popup`);
+
+  if (openedCard) {
+    openedCard.remove();
+  }
+
   const newCard = createdCard(advert);
   map.insertBefore(newCard, filter);
+  closeCard();
+};
+
+const openCard = (evt) => {
+  const buttonId = evt.target.closest(`button[data-id]`).dataset.id;
+  const currentOffer = adverts.find((advert) => {
+    return advert.offer.offerId === buttonId;
+  });
+
+  renderCard(currentOffer);
+};
+
+const closeCard = () => {
+  const openedCard = map.querySelector(`.popup`);
+  const closeCardButton = openedCard.querySelector(`.popup__close`);
+
+  const pressEscToCloseCard = (evt) => {
+    if (evt.key === `Escape`) {
+      removeCard();
+    }
+  };
+
+  const removeCard = () => {
+    openedCard.remove();
+    document.removeEventListener(`keydown`, pressEscToCloseCard);
+  };
+
+  closeCardButton.addEventListener(`mousedown`, () => {
+    removeCard();
+  });
+
+  closeCardButton.addEventListener(`keydown`, (evt) => {
+    if (evt.key === `Enter`) {
+      removeCard();
+    }
+  });
+
+  document.addEventListener(`keydown`, pressEscToCloseCard);
 };
 
 const activatePage = () => {
-  pageActive = true;
-  map.classList.remove(`map--faded`);
-  advertForm.classList.remove(`ad-form--disabled`);
-  toggleFormElememtsState(formFieldsets, false);
-  toggleFormElememtsState(formSelects, false);
-  renderPins(adverts);
-  getMainPinAddress();
+  if (!isPageActive) {
+    isPageActive = true;
+    map.classList.remove(`map--faded`);
+    advertForm.classList.remove(`ad-form--disabled`);
+    toggleFormElememtsState(formFieldsets, false);
+    toggleFormElememtsState(formSelects, false);
+    renderPins(adverts);
+    getMainPinAddress();
+  }
+
 };
 
 const deactivatePage = () => {
-  pageActive = false;
+  isPageActive = false;
   map.classList.add(`map--faded`);
   advertForm.classList.add(`ad-form--disabled`);
   toggleFormElememtsState(formFieldsets, true);
@@ -286,18 +336,12 @@ const deactivatePage = () => {
 };
 
 const getMainPinAddress = () => {
-  const pinAddressCoord = pinMain.getBoundingClientRect();
-  let mainAddressCoordX = 0;
-  let mainAddressCoordY = 0;
-  if (pageActive) {
-    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
-    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE + MAIN_PIN_TAIL);
-    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
-  } else {
-    mainAddressCoordX = Math.round(pinAddressCoord.x + MAIN_PIN_SIZE / 2);
-    mainAddressCoordY = Math.round(pinAddressCoord.y + window.pageYOffset + MAIN_PIN_SIZE / 2);
-    advertAddress.value = `${mainAddressCoordX}, ${mainAddressCoordY}`;
-  }
+  const pinX = parseInt(pinMain.style.left, 10);
+  const pinY = parseInt(pinMain.style.top, 10);
+
+  const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
+  const y = Math.round(isPageActive ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2);
+  advertAddress.value = `${x}, ${y}`;
 };
 
 const toggleFormElememtsState = (nodes, state) => {
@@ -327,7 +371,7 @@ pinMain.addEventListener(`mousedown`, (evt) => {
   }
 });
 
-window.addEventListener(`keydown`, (evt) => {
+pinMain.addEventListener(`keydown`, (evt) => {
   if (evt.key === `Enter`) {
     activatePage();
   }
@@ -363,12 +407,22 @@ advertForm.addEventListener(`input`, (evt) => {
   }
 });
 
+mapPins.addEventListener(`mousedown`, (evt) => {
+  if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
+    openCard(evt);
+  }
+});
+
+mapPins.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
+    openCard(evt);
+  }
+});
+
 const adverts = getAdverts(ADVERT_NUMBER);
+
+
 getMainPinAddress();
 toggleFormElememtsState(formFieldsets, true);
 toggleFormElememtsState(formSelects, true);
 disabledingRoom();
-
-// renderCard(adverts[0]);
-
-
