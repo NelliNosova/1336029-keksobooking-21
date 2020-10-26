@@ -83,6 +83,9 @@
   const adverts = getAdverts(ADVERT_NUMBER);
 
   window.adverts = {
+    MIN_PIN_X,
+    MIN_PIN_Y,
+    MAX_PIN_Y,
     TYPE_HOUSE,
     ADVERT_NUMBER,
     adverts,

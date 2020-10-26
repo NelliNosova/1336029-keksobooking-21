@@ -45,12 +45,14 @@
     advertAddress.value = `${x}, ${y}`;
   };
 
+  if (!window.moving.isDragged) {
+    window.main.pinMain.addEventListener(`mousedown`, (evt) => {
+      if (evt.button === 0) {
+        window.togglePage.activatePage();
+      }
+    });
+  }
 
-  window.main.pinMain.addEventListener(`mousedown`, (evt) => {
-    if (evt.button === 0) {
-      window.togglePage.activatePage();
-    }
-  });
 
   window.main.pinMain.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter`) {
@@ -73,6 +75,7 @@
   getMainPinAddress();
 
   window.pin = {
+    MAIN_PIN_SIZE,
     renderPins,
     getMainPinAddress
   };

@@ -21,7 +21,6 @@
     window.form.advertForm.classList.add(`ad-form--disabled`);
     window.util.toggleFormElememtsState(window.form.formFieldsets, true);
     window.util.toggleFormElememtsState(window.form.formSelects, true);
-
   };
 
   window.togglePage = {
