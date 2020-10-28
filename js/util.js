@@ -32,7 +32,7 @@
     return newArray;
   };
 
-  const toggleFormElememtsState = (nodes, state) => {
+  const toggleFormElementsState = (nodes, state) => {
     for (let elem of nodes) {
       elem.disabled = state;
     }
@@ -43,7 +43,7 @@
     getRandomNumber,
     getRandomIndex,
     getRandomLengthArray,
-    toggleFormElememtsState
+    toggleFormElementsState
   };
 
 })();

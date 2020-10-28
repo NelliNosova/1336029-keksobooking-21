@@ -3,9 +3,12 @@
   const PIN_MAIN_TOP = 570;
   const PIN_MAIN_LEFT = 375;
 
+  const mapPins = document.querySelector(`.map__pins`);
+  const pinMain = document.querySelector(`.map__pin--main`);
+
   let isDragged = false;
 
-  window.main.pinMain.addEventListener(`mousedown`, (evt) => {
+  pinMain.addEventListener(`mousedown`, (evt) => {
     evt.preventDefault();
 
     let startCoords = {
@@ -31,23 +34,23 @@
         y: moveEvt.clientY
       };
 
-      pinMainTop = window.main.pinMain.offsetTop - shift.y;
-      pinMainLeft = window.main.pinMain.offsetLeft - shift.x;
+      pinMainTop = pinMain.offsetTop - shift.y;
+      pinMainLeft = pinMain.offsetLeft - shift.x;
 
       if (pinMainTop < window.adverts.MIN_PIN_Y) {
-        window.main.pinMain.style.top = `${window.adverts.MIN_PIN_Y}px`;
+        pinMain.style.top = `${window.adverts.MIN_PIN_Y}px`;
       } else if (pinMainTop > window.adverts.MAX_PIN_Y) {
-        window.main.pinMain.style.top = `${window.adverts.MAX_PIN_Y}px`;
+        pinMain.style.top = `${window.adverts.MAX_PIN_Y}px`;
       } else {
-        window.main.pinMain.style.top = `${pinMainTop}px`;
+        pinMain.style.top = `${pinMainTop}px`;
       }
 
       if (pinMainLeft < window.adverts.MIN_PIN_X - window.pin.MAIN_PIN_SIZE / 2) {
-        window.main.pinMain.style.left = `${window.adverts.MIN_PIN_X - window.pin.MAIN_PIN_SIZE / 2}px`;
-      } else if (pinMainLeft > window.main.mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2) {
-        window.main.pinMain.style.left = `${window.main.mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2}px`;
+        pinMain.style.left = `${window.adverts.MIN_PIN_X - window.pin.MAIN_PIN_SIZE / 2}px`;
+      } else if (pinMainLeft > mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2) {
+        pinMain.style.left = `${mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2}px`;
       } else {
-        window.main.pinMain.style.left = `${pinMainLeft}px`;
+        pinMain.style.left = `${pinMainLeft}px`;
       }
 
       window.pin.getMainPinAddress();
@@ -63,10 +66,10 @@
       if (isDragged) {
         const onClickPreventDefault = (clickEvt) => {
           clickEvt.preventDefault();
-          window.main.pinMain.removeEventListener(`click`, onClickPreventDefault);
+          pinMain.removeEventListener(`click`, onClickPreventDefault);
         };
 
-        window.main.pinMain.addEventListener(`click`, onClickPreventDefault);
+        pinMain.addEventListener(`click`, onClickPreventDefault);
       }
     };
 

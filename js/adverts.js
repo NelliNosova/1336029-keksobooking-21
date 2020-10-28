@@ -7,11 +7,11 @@
     },
     {
       type: `flat`,
-      minPrice: `5000`
+      minPrice: `1000`
     },
     {
       type: `house`,
-      minPrice: `1000`
+      minPrice: `5000`
     },
     {
       type: `bungalow`,
@@ -40,10 +40,11 @@
   const MIN_PIN_Y = 130;
   const MAX_PIN_Y = 630;
 
+  const mapPins = document.querySelector(`.map__pins`);
 
   const getAdverts = (number) => {
     const adverts = [];
-    const getPinX = () => window.util.getRandomNumber(MIN_PIN_X, window.main.mapPins.offsetWidth);
+    const getPinX = () => window.util.getRandomNumber(MIN_PIN_X, mapPins.offsetWidth);
     const getPinY = () => window.util.getRandomNumber(MIN_PIN_Y, MAX_PIN_Y);
 
     for (let i = 1; i <= number; i++) {
@@ -87,9 +88,7 @@
     MIN_PIN_Y,
     MAX_PIN_Y,
     TYPE_HOUSE,
-    ADVERT_NUMBER,
-    adverts,
-    getAdverts
+    data: adverts
   };
 
 })();

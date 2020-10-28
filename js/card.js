@@ -3,8 +3,10 @@
   const PHOTO_WIDTH = 45;
   const PHOTO_HEIGHT = 40;
 
+  const map = document.querySelector(`.map`);
   const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filter = document.querySelector(`.map__filters-container`);
+  let currentCard = null;
 
   const defineType = (type) => {
     switch (type) {
@@ -24,16 +26,14 @@
     return type;
   };
 
+  const defineEnding = (number, txt, cases = [2, 0, 1, 1, 1, 2]) =>
+    txt[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+
   const defineRoomsHosts = (rooms, guests) => {
     let stringRoomsHosts = ``;
-
-    if (rooms === 1) {
-      stringRoomsHosts = `${rooms} комната для ${guests} гостей`;
-    } else if (rooms >= 5) {
-      stringRoomsHosts = `${rooms} комнат для ${guests} гостей`;
-    } else {
-      stringRoomsHosts = `${rooms} комнаты для ${guests} гостей`;
-    }
+    stringRoomsHosts =
+      `${rooms} ${defineEnding(rooms, [`комната`, `комнаты`, `комнат`])}
+      для ${guests} ${defineEnding(guests, [`гостя`, `гостей`, `гостей`])}`;
 
     return stringRoomsHosts;
   };
@@ -95,24 +95,45 @@
       photosElement.appendChild(photoElement);
     }
 
+    currentCard = cardElement;
     return cardElement;
   };
 
-  const renderCard = (advert) => {
-    const openedCard = window.main.map.querySelector(`.popup`);
+  const onPressEscCard = (evt) => {
+    if (evt.key === `Escape`) {
+      closeCard();
+    }
+  };
 
-    if (openedCard) {
-      openedCard.remove();
+  const renderCard = (advert) => {
+
+    if (currentCard) {
+      currentCard.remove();
     }
 
+    document.addEventListener(`keydown`, onPressEscCard);
+
     const newCard = createdCard(advert);
-    window.main.map.insertBefore(newCard, filter);
-    closeCard();
+    map.insertBefore(newCard, filter);
+
+    const closeCardButton = map.querySelector(`.popup__close`);
+
+    closeCardButton.addEventListener(`mousedown`, () => {
+      closeCard();
+    });
+
+    closeCardButton.addEventListener(`keydown`, (evt) => {
+      if (evt.key === `Enter`) {
+        closeCard();
+      }
+    });
+
   };
 
   const openCard = (evt) => {
     const buttonId = evt.target.closest(`button[data-id]`).dataset.id;
-    const currentOffer = window.adverts.adverts.find((advert) => {
+
+    const currentOffer = window.adverts.data.find((advert) => {
       return advert.offer.offerId === buttonId;
     });
 
@@ -120,31 +141,10 @@
   };
 
   const closeCard = () => {
-    const openedCard = window.main.map.querySelector(`.popup`);
-    const closeCardButton = openedCard.querySelector(`.popup__close`);
-
-    const pressEscToCloseCard = (evt) => {
-      if (evt.key === `Escape`) {
-        removeCard();
-      }
-    };
-
-    const removeCard = () => {
-      openedCard.remove();
-      document.removeEventListener(`keydown`, pressEscToCloseCard);
-    };
-
-    closeCardButton.addEventListener(`mousedown`, () => {
-      removeCard();
-    });
-
-    closeCardButton.addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter`) {
-        removeCard();
-      }
-    });
-
-    document.addEventListener(`keydown`, pressEscToCloseCard);
+    if (currentCard) {
+      currentCard.remove();
+      document.removeEventListener(`keydown`, onPressEscCard);
+    }
   };
 
   window.card = {
