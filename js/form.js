@@ -5,14 +5,6 @@
   const MIN_TITLE_LENGTH = 30;
   const MAX_TITLE_LENGTH = 100;
 
-  const mapRoom = {
-    0: [100],
-    1: [1],
-    2: [1, 2],
-    3: [1, 2, 3, `a`]
-  };
-
-
   const map = document.querySelector(`.map`);
 
   const advertForm = document.querySelector(`.ad-form`);
@@ -125,7 +117,7 @@
     for (let i = 0; i < window.adverts.TYPE_HOUSE.length; i++) {
       if (parseInt(window.adverts.TYPE_HOUSE[i].minPrice, 10) <= parseInt(evt.target.value, 10)) {
         const elem = window.adverts.TYPE_HOUSE[i].type;
-        console.log(window.adverts.TYPE_HOUSE[i].type)
+        console.log(window.adverts.TYPE_HOUSE[i].type);
         availableLength.push(elem);
       }
       if (
