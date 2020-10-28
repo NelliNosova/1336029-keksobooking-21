@@ -40,7 +40,7 @@
 
     const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
     const y = Math.round(
-        window.togglePage.isPageActive ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2
+        window.main.isPageActive ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2
     );
     advertAddress.value = `${x}, ${y}`;
   };
@@ -48,7 +48,7 @@
   if (!window.moving.isDragged) {
     window.main.pinMain.addEventListener(`mousedown`, (evt) => {
       if (evt.button === 0) {
-        window.togglePage.activatePage();
+        window.main.activatePage();
       }
     });
   }
@@ -56,7 +56,7 @@
 
   window.main.pinMain.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter`) {
-      window.togglePage.activatePage();
+      window.main.activatePage();
     }
   });
 

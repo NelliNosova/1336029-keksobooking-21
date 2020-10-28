@@ -65,8 +65,9 @@
           clickEvt.preventDefault();
           window.main.pinMain.removeEventListener(`click`, onClickPreventDefault);
         };
+
         window.main.pinMain.addEventListener(`click`, onClickPreventDefault);
-      };
+      }
     };
 
     document.addEventListener(`mousemove`, onMouseMove);
