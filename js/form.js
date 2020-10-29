@@ -42,6 +42,8 @@
   };
 
   const onCapacityFieldCheck = (evt) => {
+    advertRoomNumber.setCustomValidity(``);
+    advertCapacityNumber.setCustomValidity(``);
     const target = evt.target;
     const roomsValue = parseInt(advertRoomNumber.value, 10);
     const guestsValue = parseInt(advertCapacityNumber.value, 10);
@@ -89,11 +91,11 @@
 
     evtForm.preventDefault();
 
-    // const evtRoom = {
-    //   target: advertRoomNumber
-    // };
+    const evtRoom = {
+      target: advertRoomNumber
+    };
 
-    // onCapacityFieldCheck(evtRoom);
+    onCapacityFieldCheck(evtRoom);
   };
 
   const toggleForm = (state, bul) => {

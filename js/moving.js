@@ -37,10 +37,10 @@
       pinMainTop = pinMain.offsetTop - shift.y;
       pinMainLeft = pinMain.offsetLeft - shift.x;
 
-      if (pinMainTop < window.adverts.MIN_PIN_Y) {
-        pinMain.style.top = `${window.adverts.MIN_PIN_Y}px`;
-      } else if (pinMainTop > window.adverts.MAX_PIN_Y) {
-        pinMain.style.top = `${window.adverts.MAX_PIN_Y}px`;
+      if (pinMainTop < window.adverts.MIN_PIN_Y - window.pin.MAIN_PIN_SIZE / 2) {
+        pinMain.style.top = `${window.adverts.MIN_PIN_Y - window.pin.MAIN_PIN_SIZE / 2}px`;
+      } else if (pinMainTop > window.adverts.MAX_PIN_Y - window.pin.MAIN_PIN_SIZE / 2) {
+        pinMain.style.top = `${window.adverts.MAX_PIN_Y - window.pin.MAIN_PIN_SIZE / 2}px`;
       } else {
         pinMain.style.top = `${pinMainTop}px`;
       }
