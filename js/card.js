@@ -72,7 +72,7 @@
     priceElement.textContent = `${price}₽/ночь`;
     timeElement.textContent = `Заезд после ${checkin}, выезд до ${checkout}`;
     descriptionElement.textContent = description;
-    typeElement.textContent = defineType(type.type);
+    typeElement.textContent = defineType(type);
     capacityElement.textContent = defineRoomsHosts(rooms, guests);
     avatarElement.src = avatar;
 

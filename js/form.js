@@ -1,9 +1,19 @@
 'use strict';
 (() => {
+  const MAP_TYPE_HOUSE = {
+    palace: 10000,
+    house: 5000,
+    flat: 1000,
+    bungalow: 0
+  };
+
   const MAX_PRICE = 1000000;
 
   const MIN_TITLE_LENGTH = 30;
   const MAX_TITLE_LENGTH = 100;
+
+  const SPECIAL_ROOM_NUMBER = 100;
+  const SPECIAL_GUESTS_NUMBER = 0;
 
   const map = document.querySelector(`.map`);
 
@@ -19,124 +29,72 @@
   const formSelects = document.querySelectorAll(`select`);
   const formFieldsets = document.querySelectorAll(`fieldset`);
 
-  advertRoomNumber.addEventListener(`change`, (evt) => {
-    if (evt.target.value < advertCapacityNumber.value && evt.target.value !== `100` && advertCapacityNumber.value !== `100`) {
-      advertCapacityNumber.value = evt.target.value;
-      advertCapacityNumber.setCustomValidity(`Количество гостей не может быть больше, чем количество комнат`);
-    } else if (evt.target.value === `100`) {
-      advertCapacityNumber.value = evt.target.value;
-      advertCapacityNumber.setCustomValidity(`Опция 100 комнат доступна только не для гостей`);
-    } else if (advertCapacityNumber.value === `100` && advertCapacityNumber.value !== evt.target.value) {
-      advertCapacityNumber.value = evt.target.value;
-      advertCapacityNumber.setCustomValidity(`Опция "не для гостей" доступна только для 100 комнат`);
-    } else {
-      advertCapacityNumber.setCustomValidity(``);
-    }
-
-    advertCapacityNumber.reportValidity();
-  });
-
-  advertCapacityNumber.addEventListener(`change`, (evt) => {
-    if (evt.target.value > advertRoomNumber.value && evt.target.value !== `100` && advertRoomNumber.value !== `100`) {
-      advertRoomNumber.value = evt.target.value;
-      advertRoomNumber.setCustomValidity(`Количество комнат не может быть меньше, чем количество гостей`);
-    } else if (evt.target.value === `100`) {
-      advertRoomNumber.value = evt.target.value;
-      advertRoomNumber.setCustomValidity(`Опция "не для гостей" доступна только для 100 комнат`);
-    } else if (advertRoomNumber.value === `100` && advertRoomNumber.value !== evt.target.value) {
-      advertRoomNumber.value = evt.target.value;
-      advertRoomNumber.setCustomValidity(`Опция 100 комнат доступна только не для гостей`);
-    } else {
-      advertRoomNumber.setCustomValidity(``);
-    }
-
-    advertRoomNumber.reportValidity();
-  });
-
-  advertTitle.addEventListener(`change`, (evt) => {
+  const onTitleChange = () => {
     const valueLength = advertTitle.value.length;
+
     if (valueLength < MIN_TITLE_LENGTH) {
-      evt.target.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
+      advertTitle.setCustomValidity(`Ещё  ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
     } else if (valueLength > MAX_TITLE_LENGTH) {
-      evt.target.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
+      advertTitle.setCustomValidity(`Удалите лишние ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
     } else {
-      evt.target.setCustomValidity(``);
+      advertTitle.setCustomValidity(``);
     }
+  };
 
-    evt.target.reportValidity();
-  });
+  const onCapacityFieldCheck = (evt) => {
+    const target = evt.target;
+    const roomsValue = parseInt(advertRoomNumber.value, 10);
+    const guestsValue = parseInt(advertCapacityNumber.value, 10);
 
-  advertPrice.addEventListener(`change`, (evt) => {
-    if (advertPrice.value > MAX_PRICE) {
-      evt.target.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}`);
+    if (roomsValue === SPECIAL_ROOM_NUMBER && guestsValue !== SPECIAL_GUESTS_NUMBER) {
+      target.setCustomValidity(`Опция 100 комнат доступна только не для гостей`);
+    } else if (roomsValue !== SPECIAL_ROOM_NUMBER && guestsValue === SPECIAL_GUESTS_NUMBER) {
+      target.setCustomValidity(`Опция "не для гостей" доступна только для 100 комнат`);
+    } else if (roomsValue < guestsValue) {
+      target.setCustomValidity(`Количество гостей не может быть больше, чем количество комнат`);
     } else {
-      evt.target.setCustomValidity(``);
+      target.setCustomValidity(``);
     }
 
-    evt.target.reportValidity();
-  });
+    target.reportValidity();
+  };
 
-  advertTimein.addEventListener(`change`, () => {
-    if (advertTimeout.value !== advertTimein.value) {
-      advertTimeout.value = advertTimein.value;
-      advertTimeout.setCustomValidity(`Время заезда и выезда должно совпадать`);
+  const onCheckTimeChange = (evt) => {
+    advertTimein.value = evt.target.value;
+    advertTimeout.value = evt.target.value;
+  };
+
+  const onTypeCheck = () => {
+    const typeValue = advertType.value;
+
+    advertPrice.min = MAP_TYPE_HOUSE[typeValue];
+    advertPrice.placeholder = MAP_TYPE_HOUSE[typeValue];
+  };
+
+  const onPriceCheck = () => {
+    const priceValue = advertPrice.value;
+    const typeValue = advertType.value;
+    if (priceValue < MAP_TYPE_HOUSE[typeValue]) {
+      advertPrice.setCustomValidity(`Минимaльная цена для данного типа ${MAP_TYPE_HOUSE[typeValue]} руб.`);
+    } else if (priceValue > MAX_PRICE) {
+      advertPrice.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE} руб.`);
     } else {
-      advertTimeout.setCustomValidity(``);
+      advertPrice.setCustomValidity(``);
     }
 
-    advertTimeout.reportValidity();
-  });
+    advertPrice.reportValidity();
+  };
 
-  advertTimeout.addEventListener(`change`, () => {
-    if (advertTimein.value !== advertTimeout.value) {
-      advertTimein.value = advertTimeout.value;
-      advertTimein.setCustomValidity(`Время заезда и выезда должно совпадать`);
-    } else {
-      advertTimein.setCustomValidity(``);
-    }
+  const onFormSubmit = (evtForm) => {
 
-    advertTimein.reportValidity();
-  });
+    evtForm.preventDefault();
 
-  advertType.addEventListener(`change`, (evt) => {
-    for (let i = 0; i < window.adverts.TYPE_HOUSE.length; i++) {
+    // const evtRoom = {
+    //   target: advertRoomNumber
+    // };
 
-      if (evt.target.value === window.adverts.TYPE_HOUSE[i].type) {
-        advertPrice.min = window.adverts.TYPE_HOUSE[i].minPrice;
-        advertPrice.placeholder = window.adverts.TYPE_HOUSE[i].minPrice;
-      }
-
-    }
-  });
-
-  advertPrice.addEventListener(`change`, (evt) => {
-    const typeArray = Array.from(advertType);
-
-    const availableLength = [];
-
-    for (let i = 0; i < window.adverts.TYPE_HOUSE.length; i++) {
-      if (parseInt(window.adverts.TYPE_HOUSE[i].minPrice, 10) <= parseInt(evt.target.value, 10)) {
-        const elem = window.adverts.TYPE_HOUSE[i].type;
-        console.log(window.adverts.TYPE_HOUSE[i].type);
-        availableLength.push(elem);
-      }
-      if (
-        window.adverts.TYPE_HOUSE[i].type === advertType.value &&
-        parseInt(evt.target.value, 10) < parseInt(window.adverts.TYPE_HOUSE[i].minPrice, 10)
-      ) {
-        advertType.setCustomValidity(`Слишком маленькая цена для данного типа`);
-      } else {
-        advertType.setCustomValidity(``);
-      }
-
-      advertType.reportValidity();
-    }
-
-    window.util.toggleFormElementsState(typeArray, false);
-    const availableType = typeArray.slice(availableLength.length);
-
-    window.util.toggleFormElementsState(availableType, true);
-  });
+    // onCapacityFieldCheck(evtRoom);
+  };
 
   const toggleForm = (state, bul) => {
     map.classList[state](`map--faded`);
@@ -148,10 +106,17 @@
   window.util.toggleFormElementsState(formFieldsets, true);
   window.util.toggleFormElementsState(formSelects, true);
 
+  advertTitle.addEventListener(`change`, onTitleChange);
+  advertRoomNumber.addEventListener(`change`, onCapacityFieldCheck);
+  advertCapacityNumber.addEventListener(`change`, onCapacityFieldCheck);
+  advertTimein.addEventListener(`change`, onCheckTimeChange);
+  advertTimeout.addEventListener(`change`, onCheckTimeChange);
+  advertType.addEventListener(`change`, onTypeCheck);
+  advertPrice.addEventListener(`change`, onPriceCheck);
+
+  advertForm.addEventListener(`submit`, onFormSubmit);
+
   window.form = {
-    advertForm,
-    formSelects,
-    formFieldsets,
     toggleForm
   };
 })();

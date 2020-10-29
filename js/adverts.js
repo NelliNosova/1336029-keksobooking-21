@@ -1,22 +1,10 @@
 'use strict';
 (() => {
   const TYPE_HOUSE = [
-    {
-      type: `palace`,
-      minPrice: `10000`
-    },
-    {
-      type: `flat`,
-      minPrice: `1000`
-    },
-    {
-      type: `house`,
-      minPrice: `5000`
-    },
-    {
-      type: `bungalow`,
-      minPrice: `0`
-    }
+    `palace`,
+    `flat`,
+    `house`,
+    `bungalow`
   ];
 
   const CHECKIN = [`12:00`, `13:00`, `14:00`];
@@ -87,7 +75,6 @@
     MIN_PIN_X,
     MIN_PIN_Y,
     MAX_PIN_Y,
-    TYPE_HOUSE,
     data: adverts
   };
 
