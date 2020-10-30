@@ -38,10 +38,9 @@
   const getMainPinAddress = () => {
     const pinX = parseInt(pinMain.style.left, 10);
     const pinY = parseInt(pinMain.style.top, 10);
-
     const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
     const y = Math.round(
-        window.main.isPageActive ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2
+        window.main.isPageActive ? pinY + MAIN_PIN_SIZE / 2 : pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL
     );
 
     advertAddress.value = `${x}, ${y}`;
@@ -51,6 +50,7 @@
 
   window.pin = {
     MAIN_PIN_SIZE,
+    MAIN_PIN_TAIL,
     renderPins,
     getMainPinAddress
   };

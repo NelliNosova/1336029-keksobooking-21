@@ -7,6 +7,12 @@
     bungalow: 0
   };
 
+  const MAP_ERROR_TEXT = {
+    rooms100NotGuests0: `Опция 100 комнат доступна только не для гостей`,
+    guests0Notrooms100: `Опция "не для гостей" доступна только для 100 комнат`,
+    fewerRooms: `Количество гостей не может быть больше, чем количество комнат`
+  };
+
   const MAX_PRICE = 1000000;
 
   const MIN_TITLE_LENGTH = 30;
@@ -42,18 +48,19 @@
   };
 
   const onCapacityFieldCheck = (evt) => {
-    advertRoomNumber.setCustomValidity(``);
-    advertCapacityNumber.setCustomValidity(``);
     const target = evt.target;
     const roomsValue = parseInt(advertRoomNumber.value, 10);
     const guestsValue = parseInt(advertCapacityNumber.value, 10);
 
+    advertRoomNumber.setCustomValidity(``);
+    advertCapacityNumber.setCustomValidity(``);
+
     if (roomsValue === SPECIAL_ROOM_NUMBER && guestsValue !== SPECIAL_GUESTS_NUMBER) {
-      target.setCustomValidity(`Опция 100 комнат доступна только не для гостей`);
+      target.setCustomValidity(MAP_ERROR_TEXT.rooms100NotGuests0);
     } else if (roomsValue !== SPECIAL_ROOM_NUMBER && guestsValue === SPECIAL_GUESTS_NUMBER) {
-      target.setCustomValidity(`Опция "не для гостей" доступна только для 100 комнат`);
+      target.setCustomValidity(MAP_ERROR_TEXT.guests0Notrooms100);
     } else if (roomsValue < guestsValue) {
-      target.setCustomValidity(`Количество гостей не может быть больше, чем количество комнат`);
+      target.setCustomValidity(MAP_ERROR_TEXT.fewerRooms);
     } else {
       target.setCustomValidity(``);
     }
@@ -87,9 +94,8 @@
     advertPrice.reportValidity();
   };
 
-  const onFormSubmit = (evtForm) => {
-
-    evtForm.preventDefault();
+  const onFormSubmit = (evt) => {
+    evt.preventDefault();
 
     const evtRoom = {
       target: advertRoomNumber
@@ -115,7 +121,6 @@
   advertTimeout.addEventListener(`change`, onCheckTimeChange);
   advertType.addEventListener(`change`, onTypeCheck);
   advertPrice.addEventListener(`change`, onPriceCheck);
-
   advertForm.addEventListener(`submit`, onFormSubmit);
 
   window.form = {

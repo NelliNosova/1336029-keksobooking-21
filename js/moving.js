@@ -1,12 +1,17 @@
 'use strict';
 (() => {
-  const PIN_MAIN_TOP = 570;
-  const PIN_MAIN_LEFT = 375;
+  const MIN_PIN_X = 0;
+  const MIN_PIN_Y = 130;
+  const MAX_PIN_Y = 630;
+
+  const pinCorrectX = window.pin.MAIN_PIN_SIZE / 2;
+  const minMainPinX = MIN_PIN_X - pinCorrectX;
+  const pinCorrectY = window.pin.MAIN_PIN_SIZE + window.pin.MAIN_PIN_TAIL;
+  const minMainPinY = MIN_PIN_Y - pinCorrectY;
+  const maxMainPinY = MAX_PIN_Y - pinCorrectY;
 
   const mapPins = document.querySelector(`.map__pins`);
   const pinMain = document.querySelector(`.map__pin--main`);
-
-  let isDragged = false;
 
   pinMain.addEventListener(`mousedown`, (evt) => {
     evt.preventDefault();
@@ -19,10 +24,8 @@
     const onMouseMove = (moveEvt) => {
       moveEvt.preventDefault();
 
-      isDragged = true;
-
-      let pinMainTop = PIN_MAIN_TOP;
-      let pinMainLeft = PIN_MAIN_LEFT;
+      let pinMainTop;
+      let pinMainLeft;
 
       let shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -37,18 +40,18 @@
       pinMainTop = pinMain.offsetTop - shift.y;
       pinMainLeft = pinMain.offsetLeft - shift.x;
 
-      if (pinMainTop < window.adverts.MIN_PIN_Y - window.pin.MAIN_PIN_SIZE / 2) {
-        pinMain.style.top = `${window.adverts.MIN_PIN_Y - window.pin.MAIN_PIN_SIZE / 2}px`;
-      } else if (pinMainTop > window.adverts.MAX_PIN_Y - window.pin.MAIN_PIN_SIZE / 2) {
-        pinMain.style.top = `${window.adverts.MAX_PIN_Y - window.pin.MAIN_PIN_SIZE / 2}px`;
+      if (pinMainTop < minMainPinY) {
+        pinMain.style.top = `${minMainPinY}px`;
+      } else if (pinMainTop > maxMainPinY) {
+        pinMain.style.top = `${maxMainPinY}px`;
       } else {
         pinMain.style.top = `${pinMainTop}px`;
       }
 
-      if (pinMainLeft < window.adverts.MIN_PIN_X - window.pin.MAIN_PIN_SIZE / 2) {
-        pinMain.style.left = `${window.adverts.MIN_PIN_X - window.pin.MAIN_PIN_SIZE / 2}px`;
-      } else if (pinMainLeft > mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2) {
-        pinMain.style.left = `${mapPins.offsetWidth - window.pin.MAIN_PIN_SIZE / 2}px`;
+      if (pinMainLeft < minMainPinX) {
+        pinMain.style.left = `${minMainPinX}px`;
+      } else if (pinMainLeft > mapPins.offsetWidth - pinCorrectX) {
+        pinMain.style.left = `${mapPins.offsetWidth - pinCorrectX}px`;
       } else {
         pinMain.style.left = `${pinMainLeft}px`;
       }
@@ -63,21 +66,17 @@
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);
 
-      if (isDragged) {
-        const onClickPreventDefault = (clickEvt) => {
-          clickEvt.preventDefault();
-          pinMain.removeEventListener(`click`, onClickPreventDefault);
-        };
+      const onClickPreventDefault = (clickEvt) => {
+        clickEvt.preventDefault();
+        pinMain.removeEventListener(`click`, onClickPreventDefault);
+      };
 
-        pinMain.addEventListener(`click`, onClickPreventDefault);
-      }
+      pinMain.addEventListener(`click`, onClickPreventDefault);
+
     };
 
     document.addEventListener(`mousemove`, onMouseMove);
     document.addEventListener(`mouseup`, onMouseUp);
-  });
 
-  window.moving = {
-    isDragged
-  };
+  });
 })();

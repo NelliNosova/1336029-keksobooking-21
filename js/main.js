@@ -12,7 +12,6 @@
       window.pin.renderPins(window.adverts.data);
       window.pin.getMainPinAddress();
     }
-
   };
 
   const deactivatePage = () => {
@@ -20,13 +19,11 @@
     window.form.toggleForm(`add`, true);
   };
 
-  if (!window.moving.isDragged) {
-    pinMain.addEventListener(`mousedown`, (evt) => {
-      if (evt.button === 0) {
-        activatePage();
-      }
-    });
-  }
+  pinMain.addEventListener(`mousedown`, (evt) => {
+    if (evt.button === 0) {
+      activatePage();
+    }
+  });
 
   pinMain.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter`) {
