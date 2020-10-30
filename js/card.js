@@ -106,7 +106,6 @@
   };
 
   const renderCard = (advert) => {
-
     if (currentCard) {
       currentCard.remove();
     }
@@ -130,10 +129,10 @@
 
   };
 
-  const openCard = (evt) => {
-    const buttonId = evt.target.closest(`button[data-id]`).dataset.id;
+  const openCard = (evt, adverts) => {
+    const buttonId = parseInt(evt.target.closest(`button[data-id]`).dataset.id, 10);
 
-    const currentOffer = window.adverts.data.find((advert) => {
+    const currentOffer = adverts.find((advert) => {
       return advert.offer.offerId === buttonId;
     });
 

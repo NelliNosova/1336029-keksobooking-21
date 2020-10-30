@@ -83,6 +83,7 @@
   const onPriceCheck = () => {
     const priceValue = advertPrice.value;
     const typeValue = advertType.value;
+
     if (priceValue < MAP_TYPE_HOUSE[typeValue]) {
       advertPrice.setCustomValidity(`Минимaльная цена для данного типа ${MAP_TYPE_HOUSE[typeValue]} руб.`);
     } else if (priceValue > MAX_PRICE) {
