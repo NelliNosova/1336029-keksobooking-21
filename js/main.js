@@ -3,31 +3,26 @@
   const mapPins = document.querySelector(`.map__pins`);
   const pinMain = document.querySelector(`.map__pin--main`);
 
-  const error = document.querySelector(`#error`).content.querySelector(`.error`);
-
   let isPageActive = false;
 
-  const errorHandler = () => {
-    const errorPopup = error.cloneNode(true);
+  const onSuccess = (data) => {
+    window.dataWithId = window.util.addIdToOffer(data);
 
-    const errorMessage = errorPopup.querySelector(`.error__message`);
-
-    errorMessage.textContent = `Ошибка загрузки объявлений об аренде`;
-
-    document.body.insertAdjacentElement('afterbegin', errorPopup);
   };
+
 
   const activatePage = () => {
     if (!isPageActive) {
       isPageActive = true;
       window.form.toggleForm(`remove`, false);
-      window.load(window.pin.renderPins, pinsListener, errorHandler);
+      window.backend.load(onSuccess, window.massages.onError);
       window.pin.getMainPinAddress();
     }
   };
 
   const deactivatePage = () => {
     isPageActive = false;
+    window.pin.getMainPinAddress();
     window.form.toggleForm(`add`, true);
   };
 
@@ -43,21 +38,17 @@
     }
   });
 
-  const pinsListener = (findCard) => {
+  mapPins.addEventListener(`mousedown`, (evt) => {
+    if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
+      window.card.openCard(evt);
+    }
+  });
 
-    mapPins.addEventListener(`mousedown`, (evt) => {
-      if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
-        window.card.openCard(evt, findCard);
-      }
-    });
-
-    mapPins.addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
-        window.card.openCard(evt, findCard);
-      }
-    });
-  };
-
+  mapPins.addEventListener(`keydown`, (evt) => {
+    if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
+      window.card.openCard(evt);
+    }
+  });
 
   window.main = {
     isPageActive,

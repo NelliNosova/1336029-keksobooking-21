@@ -1,36 +1,22 @@
 'use strict';
 (() => {
-  const URL = `https://21.javascript.pages.academy/keksobooking/data`;
+  const API_URL = `https://21.javascript.pages.academy/keksobooking`;
   const TIMEOUT_IN_MS = 10000;
 
   const statusCode = {
     OK: 200
   };
 
-  const addIdOffer = (array) => {
-    array.forEach((value, index) => {
-      value.offer.offerId = index;
-
-      return value.offer.offerId;
-    });
-
-    return array;
-  };
-
-  window.load = (onSuccessOne, onSuccessTwo, onError) => {
+  const load = (onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, () => {
       if (xhr.status === statusCode.OK) {
-        const data = addIdOffer(xhr.response);
-
-        onSuccessOne(data);
-        onSuccessTwo(data);
+        onSuccess(xhr.response);
       } else {
-        onError();
+        onError(xhr.status);
       }
-
     });
 
     xhr.addEventListener(`error`, () => {
@@ -41,7 +27,11 @@
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
-    xhr.open(`GET`, URL);
+    xhr.open(`GET`, `${API_URL}/data`);
     xhr.send();
+  };
+
+  window.backend = {
+    load
   };
 })();

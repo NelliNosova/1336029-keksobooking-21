@@ -40,12 +40,23 @@
     }
   };
 
+  const addIdToOffer = (array) => {
+    array.forEach((value, index) => {
+      value.offer.offerId = index;
+
+      return value.offer.offerId;
+    });
+
+    return array;
+  };
+
   window.util = {
     getShuffle,
     getRandomNumber,
     getRandomIndex,
     getRandomLengthArray,
-    toggleFormElementsState
+    toggleFormElementsState,
+    addIdToOffer
   };
 
 })();
