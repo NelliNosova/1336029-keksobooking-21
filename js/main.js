@@ -7,7 +7,7 @@
 
   const onSuccess = (data) => {
     window.dataWithId = window.util.addIdToOffer(data);
-
+    window.pin.renderPins(window.dataWithId);
   };
 
 
@@ -40,13 +40,13 @@
 
   mapPins.addEventListener(`mousedown`, (evt) => {
     if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
-      window.card.openCard(evt);
+      window.card.openCard(evt, window.dataWithId);
     }
   });
 
   mapPins.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
-      window.card.openCard(evt);
+      window.card.openCard(evt, window.dataWithId);
     }
   });
 

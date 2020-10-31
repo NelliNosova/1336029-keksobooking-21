@@ -15,7 +15,7 @@
       if (xhr.status === statusCode.OK) {
         onSuccess(xhr.response);
       } else {
-        onError(xhr.status);
+        onError(`Ошибка сервера ${xhr.status}`);
       }
     });
 
