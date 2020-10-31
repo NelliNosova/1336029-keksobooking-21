@@ -57,7 +57,6 @@
       }
 
       window.pin.getMainPinAddress();
-
     };
 
     const onMouseUp = (upEvt) => {
@@ -72,7 +71,6 @@
       };
 
       pinMain.addEventListener(`click`, onClickPreventDefault);
-
     };
 
     document.addEventListener(`mousemove`, onMouseMove);

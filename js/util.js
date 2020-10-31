@@ -17,6 +17,7 @@
 
   const getRandomIndex = (array) => {
     const arrayIndex = getRandomNumber(0, (array.length - 1));
+
     return array[arrayIndex];
   };
 
@@ -29,6 +30,7 @@
       const newObj = shuffledArray[i];
       newArray.push(newObj);
     }
+
     return newArray;
   };
 
@@ -38,12 +40,23 @@
     }
   };
 
+  const addIdToOffer = (array) => {
+    array.forEach((value, index) => {
+      value.offer.offerId = index;
+
+      return value.offer.offerId;
+    });
+
+    return array;
+  };
+
   window.util = {
     getShuffle,
     getRandomNumber,
     getRandomIndex,
     getRandomLengthArray,
-    toggleFormElementsState
+    toggleFormElementsState,
+    addIdToOffer
   };
 
 })();
