@@ -50,13 +50,22 @@
     return array;
   };
 
+  const removeAllElemArray = (array) => {
+    array.forEach((elem) => {
+      elem.remove();
+    });
+
+    return array;
+  };
+
   window.util = {
     getShuffle,
     getRandomNumber,
     getRandomIndex,
     getRandomLengthArray,
     toggleFormElementsState,
-    addIdToOffer
+    addIdToOffer,
+    removeAllElemArray
   };
 
 })();

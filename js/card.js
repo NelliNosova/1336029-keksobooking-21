@@ -6,6 +6,7 @@
   const map = document.querySelector(`.map`);
   const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filter = document.querySelector(`.map__filters-container`);
+
   let currentCard = null;
 
   const defineType = (type) => {
