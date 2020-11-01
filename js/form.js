@@ -95,6 +95,12 @@
     advertPrice.reportValidity();
   };
 
+  const onSuccess = () => {
+    advertForm.reset();
+    window.main.deactivatePage();
+    window.messages.showSuccessMassage();
+  };
+
   const onFormSubmit = (evt) => {
     evt.preventDefault();
 
@@ -103,6 +109,7 @@
     };
 
     onCapacityFieldCheck(evtRoom);
+    window.backend.upload(new FormData(advertForm), onSuccess, window.messages.showErrorMassage);
   };
 
   const toggleForm = (state, bul) => {

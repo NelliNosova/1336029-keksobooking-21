@@ -6,6 +6,7 @@
   const map = document.querySelector(`.map`);
   const card = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filter = document.querySelector(`.map__filters-container`);
+
   let currentCard = null;
 
   const defineType = (type) => {
@@ -129,10 +130,10 @@
 
   };
 
-  const openCard = (evt, adverts) => {
+  const openCard = (evt) => {
     const buttonId = parseInt(evt.target.closest(`button[data-id]`).dataset.id, 10);
 
-    const currentOffer = adverts.find((advert) => {
+    const currentOffer = window.dataWithId.find((advert) => {
       return advert.offer.offerId === buttonId;
     });
 

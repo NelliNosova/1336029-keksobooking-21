@@ -7,8 +7,7 @@
     OK: 200
   };
 
-  const load = (onSuccess, onError) => {
-    const xhr = new XMLHttpRequest();
+  const getServerResponse = (xhr, onSuccess, onError) => {
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, () => {
@@ -27,11 +26,27 @@
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
+  };
+
+  const load = (onSuccess, onError) => {
+    const xhr = new XMLHttpRequest();
+
+    getServerResponse(xhr, onSuccess, onError);
+
     xhr.open(`GET`, `${API_URL}/data`);
     xhr.send();
   };
 
+  const upload = (data, onSuccess, onError) => {
+    const xhr = new XMLHttpRequest();
+
+    getServerResponse(xhr, onSuccess, onError);
+    xhr.open(`POST`, `${API_URL}`);
+    xhr.send(data);
+  };
+
   window.backend = {
-    load
+    load,
+    upload
   };
 })();
