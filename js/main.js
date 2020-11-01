@@ -8,7 +8,7 @@
 
   let isPageActive = false;
 
-  const onSuccess = (data) => {
+  const onSuccessLoad = (data) => {
     window.dataWithId = window.util.addIdToOffer(data);
     window.pin.renderPins(window.dataWithId);
   };
@@ -17,8 +17,8 @@
     if (!isPageActive) {
       isPageActive = true;
       window.form.toggleForm(`remove`, false);
-      window.backend.load(onSuccess, window.massages.onError);
-      window.pin.getMainPinAddress();
+      window.backend.load(onSuccessLoad, window.messages.showErrorMassage);
+      window.pin.getMainPinAddress.bind(activatePage);
     }
   };
 
@@ -51,13 +51,13 @@
 
   mapPins.addEventListener(`mousedown`, (evt) => {
     if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
-      window.card.openCard(evt, window.dataWithId);
+      window.card.openCard(evt);
     }
   });
 
   mapPins.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
-      window.card.openCard(evt, window.dataWithId);
+      window.card.openCard(evt);
     }
   });
 

@@ -98,7 +98,7 @@
   const onSuccess = () => {
     advertForm.reset();
     window.main.deactivatePage();
-    window.massages.onSuccess();
+    window.messages.showSuccessMassage();
   };
 
   const onFormSubmit = (evt) => {
@@ -109,7 +109,7 @@
     };
 
     onCapacityFieldCheck(evtRoom);
-    window.backend.upload(new FormData(advertForm), onSuccess, window.massages.onError);
+    window.backend.upload(new FormData(advertForm), onSuccess, window.messages.showErrorMassage);
   };
 
   const toggleForm = (state, bul) => {

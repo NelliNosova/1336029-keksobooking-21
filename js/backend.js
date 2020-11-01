@@ -7,7 +7,7 @@
     OK: 200
   };
 
-  const interactionServer = (xhr, onSuccess, onError) => {
+  const getServerResponse = (xhr, onSuccess, onError) => {
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, () => {
@@ -31,7 +31,7 @@
   const load = (onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
 
-    interactionServer(xhr, onSuccess, onError);
+    getServerResponse(xhr, onSuccess, onError);
 
     xhr.open(`GET`, `${API_URL}/data`);
     xhr.send();
@@ -40,7 +40,7 @@
   const upload = (data, onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
 
-    interactionServer(xhr, onSuccess, onError);
+    getServerResponse(xhr, onSuccess, onError);
     xhr.open(`POST`, `${API_URL}`);
     xhr.send(data);
   };

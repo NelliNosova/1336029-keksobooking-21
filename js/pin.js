@@ -3,8 +3,6 @@
   const PIN_WIDTH = 50;
   const PIN_HEIGHT = 70;
 
-  const PIN_NUMBER = 10;
-
   const MAIN_PIN_SIZE = 65;
   const MAIN_PIN_TAIL = 22;
 
@@ -22,24 +20,16 @@
     pinImg.src = advert.author.avatar;
     pinImg.alt = advert.offer.title;
     pinElement.dataset.id = advert.offer.offerId;
-
     return pinElement;
   };
 
   const renderPins = (adverts) => {
     const fragment = document.createDocumentFragment();
 
-    const renderFragment = (number) => {
-      for (let i = 0; i < number; i++) {
-        const newElement = createPin(adverts[i]);
-        fragment.appendChild(newElement);
-      }
-    };
+    for (let i = 0; i < adverts.length; i++) {
 
-    if (adverts.length > PIN_NUMBER) {
-      renderFragment(PIN_NUMBER);
-    } else {
-      renderFragment(adverts.length);
+      const newElement = createPin(adverts[i]);
+      fragment.appendChild(newElement);
     }
 
     mapPins.appendChild(fragment);
