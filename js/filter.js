@@ -1,12 +1,13 @@
 'use strict';
 (() => {
+  const ANY_TYPE = `any`;
   const filter = document.querySelector(`.map__filters-container`);
   const housingType = filter.querySelector(`#housing-type`);
 
   const getFilterType = (adverts) => {
     let filterAdverts = window.dataWithId;
 
-    if (housingType.value !== `any`) {
+    if (housingType.value !== ANY_TYPE) {
       filterAdverts = adverts.filter((elem) => {
         return elem.offer.type === housingType.value;
       });
