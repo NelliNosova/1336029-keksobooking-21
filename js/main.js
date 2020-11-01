@@ -10,6 +10,7 @@
 
   const onSuccessLoad = (data) => {
     window.dataWithId = window.util.addIdToOffer(data);
+
     window.pin.renderPins(window.dataWithId);
   };
 
@@ -18,7 +19,7 @@
       isPageActive = true;
       window.form.toggleForm(`remove`, false);
       window.backend.load(onSuccessLoad, window.messages.showErrorMassage);
-      window.pin.getMainPinAddress.bind(activatePage);
+      window.pin.getMainPinAddress();
     }
   };
 
