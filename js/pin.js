@@ -1,5 +1,7 @@
 'use strict';
 (() => {
+  const NUMBER_PINS = 5;
+
   const PIN_WIDTH = 50;
   const PIN_HEIGHT = 70;
 
@@ -26,10 +28,18 @@
   const renderPins = (adverts) => {
     const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < adverts.length; i++) {
+    const getPins = (length) => {
+      for (let i = 0; i < length; i++) {
+        const newElement = createPin(adverts[i]);
 
-      const newElement = createPin(adverts[i]);
-      fragment.appendChild(newElement);
+        fragment.appendChild(newElement);
+      }
+    };
+
+    if (adverts.length < NUMBER_PINS) {
+      getPins(adverts.length);
+    } else {
+      getPins(NUMBER_PINS);
     }
 
     mapPins.appendChild(fragment);
