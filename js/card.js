@@ -130,6 +130,14 @@
 
   };
 
+  const removeCard = () => {
+    const openedCard = document.querySelector(`.map__card`);
+
+    if (openedCard) {
+      openedCard.remove();
+    }
+  };
+
   const openCard = (evt) => {
     const buttonId = parseInt(evt.target.closest(`button[data-id]`).dataset.id, 10);
 
@@ -150,6 +158,7 @@
   window.card = {
     renderCard,
     openCard,
+    removeCard,
     closeCard
   };
 })();
