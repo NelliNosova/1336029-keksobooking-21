@@ -3,6 +3,7 @@
 (() => {
   const ANY_VALUE = `any`;
   const HIGH_PRICE = `high`;
+  const NUMBER_PINS = 5;
 
   const PRICE_MAP = {
     low: {
@@ -31,7 +32,8 @@
     if (
       housingType.value !== ANY_VALUE &&
       elem.offer.type === housingType.value ||
-      housingType.value === ANY_VALUE) {
+      housingType.value === ANY_VALUE
+    ) {
       return true;
     } else {
       return false;
@@ -41,8 +43,15 @@
   const getFilterPrice = (elem) => {
     if (
       housingPrice.value !== ANY_VALUE &&
+      housingPrice.value !== HIGH_PRICE &&
       elem.offer.price <= PRICE_MAP[housingPrice.value].max &&
       elem.offer.price >= PRICE_MAP[housingPrice.value].min || housingPrice.value === ANY_VALUE
+    ) {
+      return true;
+    } else if (
+      housingPrice.value !== ANY_VALUE &&
+      housingPrice.value === HIGH_PRICE &&
+      elem.offer.price >= PRICE_MAP[housingPrice.value].min
     ) {
       return true;
     } else {
@@ -51,7 +60,11 @@
   };
 
   const getFilterRooms = (elem) => {
-    if (housingRooms.value !== ANY_VALUE && elem.offer.rooms === parseInt(housingRooms.value, 10)) {
+    if (
+      housingRooms.value !== ANY_VALUE &&
+      elem.offer.rooms === parseInt(housingRooms.value, 10) ||
+      housingRooms.value === ANY_VALUE
+    ) {
       return true;
     } else {
       return false;
@@ -71,22 +84,18 @@
 
   const getFilterFeatures = (elem) => {
     const housingFeaturesArray = Array.from(housingFeaturesInput);
-    const housingFeaturesChecked = [];
 
     for (let i = 0; i < housingFeaturesInput.length; i++) {
-      if (housingFeaturesArray[i].checked) {
-        housingFeaturesChecked.push(housingFeaturesArray[i].value);
-      }
-    }
+      let featuresChecked = housingFeaturesArray[i].checked;
+      let featuresCheckedValue = housingFeaturesArray[i].value;
 
-    for (let j = 0; j < housingFeaturesChecked.length; j++) {
       if (
-        housingFeaturesChecked.length !== 0 &&
-        elem.offer.features.includes(housingFeaturesChecked[j])
+        featuresChecked &&
+        !elem.offer.features.includes(featuresCheckedValue)
       ) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     }
   };
@@ -96,14 +105,17 @@
 
     for (let i = 0; i < array.length; i++) {
       if (
+        filterAdverts.length < NUMBER_PINS &&
         getFilterType(array[i]) &&
         getFilterPrice(array[i]) &&
         getFilterRooms(array[i]) &&
-        getFilterGuests(array[i])
+        getFilterGuests(array[i]) &&
+        getFilterFeatures(array[i])
       ) {
         filterAdverts.push(array[i]);
       }
     }
+
 
     return filterAdverts;
   };
