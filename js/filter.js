@@ -82,37 +82,32 @@
     }
   };
 
-  const getFilterFeatures = (elem) => {
-    const housingFeaturesArray = Array.from(housingFeaturesInput);
-
-    for (let i = 0; i < housingFeaturesInput.length; i++) {
-      let featuresChecked = housingFeaturesArray[i].checked;
-      let featuresCheckedValue = housingFeaturesArray[i].value;
-
-      if (
-        featuresChecked &&
-        !elem.offer.features.includes(featuresCheckedValue)
-      ) {
-        return false;
-      } else {
-        return true;
+  const getFilterFeatures = (array) => {
+    housingFeaturesInput.forEach((elem) => {
+      if (elem.checked) {
+        const checkedElementFeature = elem.value;
+        array = array.filter((elemFeaturesOffer) => {
+          return elemFeaturesOffer.offer.features.includes(checkedElementFeature);
+        });
       }
-    }
+    });
+
+    return array;
   };
 
   const filterData = (array) => {
+    let advertsFeaturesFilter = getFilterFeatures(array);
     let filterAdverts = [];
 
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < advertsFeaturesFilter.length; i++) {
       if (
         filterAdverts.length < NUMBER_PINS &&
-        getFilterType(array[i]) &&
-        getFilterPrice(array[i]) &&
-        getFilterRooms(array[i]) &&
-        getFilterGuests(array[i]) &&
-        getFilterFeatures(array[i])
+        getFilterType(advertsFeaturesFilter[i]) &&
+        getFilterPrice(advertsFeaturesFilter[i]) &&
+        getFilterRooms(advertsFeaturesFilter[i]) &&
+        getFilterGuests(advertsFeaturesFilter[i])
       ) {
-        filterAdverts.push(array[i]);
+        filterAdverts.push(advertsFeaturesFilter[i]);
       }
     }
 
