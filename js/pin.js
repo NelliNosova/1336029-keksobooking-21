@@ -28,21 +28,22 @@
   const renderPins = (adverts) => {
     const fragment = document.createDocumentFragment();
 
-    const getPins = (length) => {
-      for (let i = 0; i < length; i++) {
-        const newElement = createPin(adverts[i]);
+    for (let i = 0; i < adverts.length && i < NUMBER_PINS; i++) {
+      const newElement = createPin(adverts[i]);
 
-        fragment.appendChild(newElement);
-      }
-    };
-
-    if (adverts.length < NUMBER_PINS) {
-      getPins(adverts.length);
-    } else {
-      getPins(NUMBER_PINS);
+      fragment.appendChild(newElement);
     }
 
     mapPins.appendChild(fragment);
+  };
+
+  const removePins = () => {
+    const pins = document.querySelectorAll(`button[data-id]`);
+    pins.forEach((elem) => {
+      elem.remove();
+    });
+
+    return pins;
   };
 
   const getMainPinAddress = () => {
@@ -62,6 +63,7 @@
     MAIN_PIN_SIZE,
     MAIN_PIN_TAIL,
     renderPins,
+    removePins,
     getMainPinAddress
   };
 

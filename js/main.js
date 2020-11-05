@@ -11,7 +11,7 @@
   const onSuccessLoad = (data) => {
     window.dataWithId = window.util.addIdToOffer(data);
 
-    window.pin.renderPins(window.dataWithId);
+    window.pin.renderPins(window.filter.filterData(window.dataWithId));
   };
 
   const activatePage = () => {

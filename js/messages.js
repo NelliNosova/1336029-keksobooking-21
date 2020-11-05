@@ -5,7 +5,7 @@
   const success = document.querySelector(`#success`).content.querySelector(`.success`);
 
   const onCloseMessage = (elem) => {
-    const clickToCloseMessage = () => {
+    const onClickToCloseMessage = () => {
       elem.remove();
     };
 
@@ -15,11 +15,11 @@
       }
     };
 
-    document.addEventListener(`click`, clickToCloseMessage);
+    document.addEventListener(`click`, onClickToCloseMessage);
     document.addEventListener(`keydown`, onPressEscMessage);
 
     if (!elem) {
-      document.removeEventListener(`click`, clickToCloseMessage);
+      document.removeEventListener(`click`, onClickToCloseMessage);
       document.removeEventListener(`keydown`, onPressEscMessage);
     }
   };
