@@ -29,88 +29,57 @@
   const housingFeaturesInput = housingFeatures.querySelectorAll(`input[name="features"]`);
 
   const getFilterType = (elem) => {
-    if (
-      housingType.value !== ANY_VALUE &&
-      elem.offer.type === housingType.value ||
-      housingType.value === ANY_VALUE
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return housingType.value === ANY_VALUE || elem.offer.type === housingType.value;
   };
 
   const getFilterPrice = (elem) => {
     if (
-      housingPrice.value !== ANY_VALUE &&
+      housingPrice.value === ANY_VALUE ||
       housingPrice.value !== HIGH_PRICE &&
       elem.offer.price <= PRICE_MAP[housingPrice.value].max &&
-      elem.offer.price >= PRICE_MAP[housingPrice.value].min || housingPrice.value === ANY_VALUE
-    ) {
-      return true;
-    } else if (
-      housingPrice.value !== ANY_VALUE &&
-      housingPrice.value === HIGH_PRICE &&
       elem.offer.price >= PRICE_MAP[housingPrice.value].min
     ) {
       return true;
-    } else {
-      return false;
+    } else if (housingPrice.value === HIGH_PRICE && elem.offer.price >= PRICE_MAP[housingPrice.value].min) {
+      return true;
     }
+
+    return false;
   };
 
   const getFilterRooms = (elem) => {
-    if (
-      housingRooms.value !== ANY_VALUE &&
-      elem.offer.rooms === parseInt(housingRooms.value, 10) ||
-      housingRooms.value === ANY_VALUE
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return housingRooms.value === ANY_VALUE || elem.offer.rooms === parseInt(housingRooms.value, 10);
   };
 
   const getFilterGuests = (elem) => {
-    if (
-      housingGuests.value !== ANY_VALUE && elem.offer.guests === parseInt(housingGuests.value, 10) ||
-      housingGuests.value === ANY_VALUE
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return housingGuests.value === ANY_VALUE || elem.offer.guests === parseInt(housingGuests.value, 10);
   };
 
-  const getFilterFeatures = (array) => {
-    housingFeaturesInput.forEach((elem) => {
-      if (elem.checked) {
-        const checkedElementFeature = elem.value;
-        array = array.filter((elemFeaturesOffer) => {
-          return elemFeaturesOffer.offer.features.includes(checkedElementFeature);
-        });
+  const getFilterFeatures = (elem) => {
+    for (let i = 0; i < housingFeaturesInput.length; i++) {
+      if (housingFeaturesInput[i].checked && !elem.offer.features.includes(housingFeaturesInput[i].value)) {
+        return false;
       }
-    });
+    }
 
-    return array;
+    return true;
   };
 
   const filterData = (array) => {
-    let advertsFeaturesFilter = getFilterFeatures(array);
     let filterAdverts = [];
 
-    for (let i = 0; i < advertsFeaturesFilter.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       if (
         filterAdverts.length < NUMBER_PINS &&
-        getFilterType(advertsFeaturesFilter[i]) &&
-        getFilterPrice(advertsFeaturesFilter[i]) &&
-        getFilterRooms(advertsFeaturesFilter[i]) &&
-        getFilterGuests(advertsFeaturesFilter[i])
+        getFilterType(array[i]) &&
+        getFilterPrice(array[i]) &&
+        getFilterRooms(array[i]) &&
+        getFilterGuests(array[i]) &&
+        getFilterFeatures(array[i])
       ) {
-        filterAdverts.push(advertsFeaturesFilter[i]);
+        filterAdverts.push(array[i]);
       }
     }
-
 
     return filterAdverts;
   };
@@ -123,9 +92,9 @@
     window.pin.renderPins(filteredAdverts);
   };
 
-  housingType.addEventListener(`change`, onFilterChange);
-  housingPrice.addEventListener(`change`, onFilterChange);
-  housingRooms.addEventListener(`change`, onFilterChange);
-  housingGuests.addEventListener(`change`, onFilterChange);
-  housingFeatures.addEventListener(`change`, onFilterChange);
+  filter.addEventListener(`change`, onFilterChange);
+
+  window.filter = {
+    filterData
+  };
 })();
