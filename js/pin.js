@@ -1,70 +1,68 @@
 'use strict';
-(() => {
-  const NUMBER_PINS = 5;
 
-  const PIN_WIDTH = 50;
-  const PIN_HEIGHT = 70;
+const NUMBER_PINS = 5;
 
-  const MAIN_PIN_SIZE = 65;
-  const MAIN_PIN_TAIL = 22;
+const PIN_WIDTH = 50;
+const PIN_HEIGHT = 70;
 
-  const mapPins = document.querySelector(`.map__pins`);
-  const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-  const pinMain = document.querySelector(`.map__pin--main`);
-  const advertAddress = document.querySelector(`#address`);
+const MAIN_PIN_SIZE = 65;
+const MAIN_PIN_TAIL = 22;
 
-  const createPin = (advert) => {
-    const pinElement = pin.cloneNode(true);
-    const pinImg = pinElement.querySelector(`img`);
+const mapPins = document.querySelector(`.map__pins`);
+const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
+const pinMain = document.querySelector(`.map__pin--main`);
+const advertAddress = document.querySelector(`#address`);
 
-    pinElement.style.left = `${advert.location.x - PIN_WIDTH / 2}px`;
-    pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
-    pinImg.src = advert.author.avatar;
-    pinImg.alt = advert.offer.title;
-    pinElement.dataset.id = advert.offer.offerId;
-    return pinElement;
-  };
+const createPin = (advert) => {
+  const pinElement = pin.cloneNode(true);
+  const pinImg = pinElement.querySelector(`img`);
 
-  const renderPins = (adverts) => {
-    const fragment = document.createDocumentFragment();
+  pinElement.style.left = `${advert.location.x - PIN_WIDTH / 2}px`;
+  pinElement.style.top = `${advert.location.y - PIN_HEIGHT}px`;
+  pinImg.src = advert.author.avatar;
+  pinImg.alt = advert.offer.title;
+  pinElement.dataset.id = advert.offer.offerId;
+  return pinElement;
+};
 
-    for (let i = 0; i < adverts.length && i < NUMBER_PINS; i++) {
-      const newElement = createPin(adverts[i]);
+const renderPins = (adverts) => {
+  const fragment = document.createDocumentFragment();
 
-      fragment.appendChild(newElement);
-    }
+  for (let i = 0; i < adverts.length && i < NUMBER_PINS; i++) {
+    const newElement = createPin(adverts[i]);
 
-    mapPins.appendChild(fragment);
-  };
+    fragment.appendChild(newElement);
+  }
 
-  const removePins = () => {
-    const pins = document.querySelectorAll(`button[data-id]`);
-    pins.forEach((elem) => {
-      elem.remove();
-    });
+  mapPins.appendChild(fragment);
+};
 
-    return pins;
-  };
+const removePins = () => {
+  const pins = document.querySelectorAll(`button[data-id]`);
+  pins.forEach((elem) => {
+    elem.remove();
+  });
 
-  const getMainPinAddress = () => {
-    const pinX = parseInt(pinMain.style.left, 10);
-    const pinY = parseInt(pinMain.style.top, 10);
-    const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
-    const y = Math.round(
-        window.main.isPageActive ? pinY + MAIN_PIN_SIZE / 2 : pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL
-    );
+  return pins;
+};
 
-    advertAddress.value = `${x}, ${y}`;
-  };
+const getMainPinAddress = () => {
+  const pinX = parseInt(pinMain.style.left, 10);
+  const pinY = parseInt(pinMain.style.top, 10);
+  const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
+  const y = Math.round(
+      window.main.isPageActive ? pinY + MAIN_PIN_SIZE / 2 : pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL
+  );
 
-  getMainPinAddress();
+  advertAddress.value = `${x}, ${y}`;
+};
 
-  window.pin = {
-    MAIN_PIN_SIZE,
-    MAIN_PIN_TAIL,
-    renderPins,
-    removePins,
-    getMainPinAddress
-  };
+getMainPinAddress();
 
-})();
+window.pin = {
+  MAIN_PIN_SIZE,
+  MAIN_PIN_TAIL,
+  renderPins,
+  removePins,
+  getMainPinAddress
+};

@@ -1,50 +1,49 @@
 'use strict';
-(() => {
-  const main = document.querySelector(`main`);
-  const error = document.querySelector(`#error`).content.querySelector(`.error`);
-  const success = document.querySelector(`#success`).content.querySelector(`.success`);
 
-  const onCloseMessage = (elem) => {
-    const onClickToCloseMessage = () => {
+const main = document.querySelector(`main`);
+const error = document.querySelector(`#error`).content.querySelector(`.error`);
+const success = document.querySelector(`#success`).content.querySelector(`.success`);
+
+const onCloseMessage = (elem) => {
+  const onClickToCloseMessage = () => {
+    elem.remove();
+  };
+
+  const onPressEscMessage = (evt) => {
+    if (evt.key === `Escape`) {
       elem.remove();
-    };
-
-    const onPressEscMessage = (evt) => {
-      if (evt.key === `Escape`) {
-        elem.remove();
-      }
-    };
-
-    document.addEventListener(`click`, onClickToCloseMessage);
-    document.addEventListener(`keydown`, onPressEscMessage);
-
-    if (!elem) {
-      document.removeEventListener(`click`, onClickToCloseMessage);
-      document.removeEventListener(`keydown`, onPressEscMessage);
     }
   };
 
-  const showErrorMassage = (textError) => {
-    const errorPopup = error.cloneNode(true);
+  document.addEventListener(`click`, onClickToCloseMessage);
+  document.addEventListener(`keydown`, onPressEscMessage);
 
-    const errorMessage = errorPopup.querySelector(`.error__message`);
+  if (!elem) {
+    document.removeEventListener(`click`, onClickToCloseMessage);
+    document.removeEventListener(`keydown`, onPressEscMessage);
+  }
+};
 
-    errorMessage.textContent = textError;
+const showErrorMassage = (textError) => {
+  const errorPopup = error.cloneNode(true);
 
-    onCloseMessage(errorPopup);
-    main.insertAdjacentElement(`afterbegin`, errorPopup);
-  };
+  const errorMessage = errorPopup.querySelector(`.error__message`);
 
-  const showSuccessMassage = () => {
-    const successPopup = success.cloneNode(true);
+  errorMessage.textContent = textError;
 
-    main.insertAdjacentElement(`afterbegin`, successPopup);
+  onCloseMessage(errorPopup);
+  main.insertAdjacentElement(`afterbegin`, errorPopup);
+};
 
-    onCloseMessage(successPopup);
-  };
+const showSuccessMassage = () => {
+  const successPopup = success.cloneNode(true);
 
-  window.messages = {
-    showErrorMassage,
-    showSuccessMassage
-  };
-})();
+  main.insertAdjacentElement(`afterbegin`, successPopup);
+
+  onCloseMessage(successPopup);
+};
+
+window.messages = {
+  showErrorMassage,
+  showSuccessMassage
+};
