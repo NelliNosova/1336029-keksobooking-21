@@ -32,9 +32,7 @@
   };
 
   const getPreviewPhoto = () => {
-    const img = `<img alt="Фото объекта" width="70" height="70">`;
-
-    photoPreview.innerHTML = img;
+    photoPreview.innerHTML = `<img alt="Фото объекта" width="70" height="70">`;
 
     const imgPreview = photoPreview.querySelector(`img`);
 

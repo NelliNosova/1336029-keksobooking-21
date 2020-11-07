@@ -33,18 +33,9 @@
   };
 
   const getFilterPrice = (elem) => {
-    if (
-      housingPrice.value === ANY_VALUE ||
-      housingPrice.value !== HIGH_PRICE &&
+    return housingPrice.value === ANY_VALUE ||
       elem.offer.price <= PRICE_MAP[housingPrice.value].max &&
-      elem.offer.price >= PRICE_MAP[housingPrice.value].min
-    ) {
-      return true;
-    } else if (housingPrice.value === HIGH_PRICE && elem.offer.price >= PRICE_MAP[housingPrice.value].min) {
-      return true;
-    }
-
-    return false;
+      elem.offer.price >= PRICE_MAP[housingPrice.value].min;
   };
 
   const getFilterRooms = (elem) => {
