@@ -23,17 +23,24 @@
     }
   };
 
+  const checkRemove = (elem) => {
+    if (elem) {
+      elem.remove();
+    }
+  };
+
   const deactivatePage = () => {
-    const pins = mapPins.querySelectorAll(`button[data-id]`);
     const card = document.querySelector(`.map__card`);
+    const avatarPreview = document.querySelector(`.ad-form-header__preview img`);
+    const photoPreview = document.querySelector(`.ad-form__photo img`);
 
     isPageActive = false;
 
-    if (card) {
-      card.remove();
-    }
+    checkRemove(card);
+    checkRemove(avatarPreview);
+    checkRemove(photoPreview);
 
-    window.util.removeAllElemArray(pins);
+    window.pin.removePins();
     window.pin.getMainPinAddress();
     window.form.toggleForm(`add`, true);
   };
