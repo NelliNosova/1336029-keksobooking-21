@@ -1,62 +1,60 @@
 'use strict';
-(() => {
-  const getShuffle = (array) => {
-    const shuffledArray = array.slice();
 
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-    }
+const getShuffle = (array) => {
+  const shuffledArray = array.slice();
 
-    return shuffledArray;
-  };
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
 
-  const getRandomNumber = (min, max) => {
-    return Math.round(Math.random() * (max - min) + min);
-  };
+  return shuffledArray;
+};
 
-  const getRandomIndex = (array) => {
-    const arrayIndex = getRandomNumber(0, (array.length - 1));
+const getRandomNumber = (min, max) => {
+  return Math.round(Math.random() * (max - min) + min);
+};
 
-    return array[arrayIndex];
-  };
+const getRandomIndex = (array) => {
+  const arrayIndex = getRandomNumber(0, (array.length - 1));
 
-  const getRandomLengthArray = (array) => {
-    const newArray = [];
-    const shuffledArray = getShuffle(array);
-    const randomLength = getRandomNumber(0, array.length);
+  return array[arrayIndex];
+};
 
-    for (let i = 0; i < randomLength; i++) {
-      const newObj = shuffledArray[i];
-      newArray.push(newObj);
-    }
+const getRandomLengthArray = (array) => {
+  const newArray = [];
+  const shuffledArray = getShuffle(array);
+  const randomLength = getRandomNumber(0, array.length);
 
-    return newArray;
-  };
+  for (let i = 0; i < randomLength; i++) {
+    const newObj = shuffledArray[i];
+    newArray.push(newObj);
+  }
 
-  const toggleFormElementsState = (nodes, state) => {
-    for (let elem of nodes) {
-      elem.disabled = state;
-    }
-  };
+  return newArray;
+};
 
-  const addIdToOffer = (array) => {
-    array.forEach((value, index) => {
-      value.offer.offerId = index;
+const toggleFormElementsState = (nodes, state) => {
+  for (let elem of nodes) {
+    elem.disabled = state;
+  }
+};
 
-      return value.offer.offerId;
-    });
+const addIdToOffer = (array) => {
+  array.forEach((value, index) => {
+    value.offer.offerId = index;
 
-    return array;
-  };
+    return value.offer.offerId;
+  });
 
-  window.util = {
-    getShuffle,
-    getRandomNumber,
-    getRandomIndex,
-    getRandomLengthArray,
-    toggleFormElementsState,
-    addIdToOffer
-  };
+  return array;
+};
 
-})();
+window.util = {
+  getShuffle,
+  getRandomNumber,
+  getRandomIndex,
+  getRandomLengthArray,
+  toggleFormElementsState,
+  addIdToOffer
+};

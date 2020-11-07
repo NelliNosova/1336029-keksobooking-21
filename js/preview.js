@@ -1,44 +1,42 @@
 'use strict';
 
-(() => {
-  const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
-  const avatarChooser = document.querySelector(`.ad-form__field input[type=file]`);
-  const photoChooser = document.querySelector(`.ad-form__upload input[type=file]`);
-  const avatarPreview = document.querySelector(`.ad-form-header__preview img`);
-  const photoPreview = document.querySelector(`.ad-form__photo`);
+const avatarChooser = document.querySelector(`.ad-form__field input[type=file]`);
+const photoChooser = document.querySelector(`.ad-form__upload input[type=file]`);
+const avatarPreview = document.querySelector(`.ad-form-header__preview img`);
+const photoPreview = document.querySelector(`.ad-form__photo`);
 
-  const getSrc = (chooser, elemSrc) => {
-    const file = chooser.files[0];
+const getSrc = (chooser, elemSrc) => {
+  const file = chooser.files[0];
 
-    const matches = FILE_TYPES.some(function (type) {
-      return file.type.endsWith(type);
+  const matches = FILE_TYPES.some(function (type) {
+    return file.type.endsWith(type);
+  });
+
+  if (matches) {
+    const reader = new FileReader();
+
+
+    reader.addEventListener(`load`, function () {
+      elemSrc.src = reader.result;
     });
 
-    if (matches) {
-      const reader = new FileReader();
+    reader.readAsDataURL(file);
+  }
+};
 
+const getSrcAvatar = () => {
+  getSrc(avatarChooser, avatarPreview);
+};
 
-      reader.addEventListener(`load`, function () {
-        elemSrc.src = reader.result;
-      });
+const getPreviewPhoto = () => {
+  photoPreview.innerHTML = `<img alt="Фото объекта" width="70" height="70">`;
 
-      reader.readAsDataURL(file);
-    }
-  };
+  const imgPreview = photoPreview.querySelector(`img`);
 
-  const getSrcAvatar = () => {
-    getSrc(avatarChooser, avatarPreview);
-  };
+  getSrc(photoChooser, imgPreview);
+};
 
-  const getPreviewPhoto = () => {
-    photoPreview.innerHTML = `<img alt="Фото объекта" width="70" height="70">`;
-
-    const imgPreview = photoPreview.querySelector(`img`);
-
-    getSrc(photoChooser, imgPreview);
-  };
-
-  avatarChooser.addEventListener(`change`, getSrcAvatar);
-  photoChooser.addEventListener(`change`, getPreviewPhoto);
-})();
+avatarChooser.addEventListener(`change`, getSrcAvatar);
+photoChooser.addEventListener(`change`, getPreviewPhoto);
