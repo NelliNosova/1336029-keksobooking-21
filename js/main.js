@@ -35,7 +35,7 @@ const deactivatePage = () => {
   isPageActive = false;
 
   avatarPreview.src = `img/muffin-grey.svg`;
-  window.util.toggleFormElementsChecked(checkboxes)
+  window.util.toggleFormElementsChecked(checkboxes);
   window.util.checkRemove(card);
   window.util.checkRemove(photoPreview);
 
