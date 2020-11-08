@@ -1,7 +1,10 @@
 'use strict';
 
-const MAIN_PIN_LEFT = 570;
-const MAIN_PIN_TOP = 374;
+const Key = {
+  ENTER: `Enter`,
+  ESCAPE: `Escape`
+};
+
 const mapPins = document.querySelector(`.map__pins`);
 const pinMain = document.querySelector(`.map__pin--main`);
 const resetButton = document.querySelector(`.ad-form__reset`);
@@ -11,21 +14,15 @@ let isPageActive = false;
 const onSuccessLoad = (data) => {
   window.dataWithId = window.util.addIdToOffer(data);
 
-  window.pin.renderPins(window.filter.filterData(window.dataWithId));
+  window.pin.render(window.filter.getData(window.dataWithId));
 };
 
 const activatePage = () => {
   if (!isPageActive) {
     isPageActive = true;
-    window.form.toggleForm(`remove`, false);
-    window.backend.load(onSuccessLoad, window.messages.showErrorMassage);
-    window.pin.getMainPinAddress();
-  }
-};
-
-const checkRemove = (elem) => {
-  if (elem) {
-    elem.remove();
+    window.form.toggle(`remove`, false);
+    window.backend.load(onSuccessLoad, window.messages.showError);
+    window.pin.getMainAddress(isPageActive);
   }
 };
 
@@ -33,16 +30,18 @@ const deactivatePage = () => {
   const card = document.querySelector(`.map__card`);
   const avatarPreview = document.querySelector(`.ad-form-header__preview img`);
   const photoPreview = document.querySelector(`.ad-form__photo img`);
+  const checkboxes = document.querySelectorAll(`input[type=checkbox]`);
 
   isPageActive = false;
 
-  checkRemove(card);
-  checkRemove(avatarPreview);
-  checkRemove(photoPreview);
+  avatarPreview.src = `img/muffin-grey.svg`;
+  window.util.toggleFormElementsChecked(checkboxes)
+  window.util.checkRemove(card);
+  window.util.checkRemove(photoPreview);
 
-  window.pin.removePins();
-  window.pin.getMainPinAddress();
-  window.form.toggleForm(`add`, true);
+  window.pin.remove();
+  window.pin.getMainAddress(isPageActive);
+  window.form.toggle(`add`, true);
 };
 
 pinMain.addEventListener(`mousedown`, (evt) => {
@@ -52,31 +51,30 @@ pinMain.addEventListener(`mousedown`, (evt) => {
 });
 
 pinMain.addEventListener(`keydown`, (evt) => {
-  if (evt.key === `Enter`) {
+  if (evt.key === Key.ENTER) {
     activatePage();
   }
 });
 
 mapPins.addEventListener(`mousedown`, (evt) => {
   if (evt.button === 0 && evt.target.closest(`button[data-id]`)) {
-    window.card.openCard(evt);
+    window.card.open(evt);
   }
 });
 
 mapPins.addEventListener(`keydown`, (evt) => {
-  if (evt.key === `Enter` && evt.target.closest(`button[data-id]`)) {
-    window.card.openCard(evt);
+  if (evt.key === Key.ENTER && evt.target.closest(`button[data-id]`)) {
+    window.card.open(evt);
   }
 });
 
 resetButton.addEventListener(`click`, () => {
-  pinMain.style.left = `${MAIN_PIN_LEFT}px`;
-  pinMain.style.top = `${MAIN_PIN_TOP}px`;
-
+  window.pin.resetMainAddress();
   deactivatePage();
 });
 
 window.main = {
+  Key,
   isPageActive,
   activatePage,
   deactivatePage

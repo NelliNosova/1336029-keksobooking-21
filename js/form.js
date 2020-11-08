@@ -1,6 +1,6 @@
 'use strict';
 
-const MAP_TYPE_HOUSE = {
+const priceMap = {
   palace: 10000,
   house: 5000,
   flat: 1000,
@@ -76,16 +76,16 @@ const onCheckTimeChange = (evt) => {
 const onTypeCheck = () => {
   const typeValue = advertType.value;
 
-  advertPrice.min = MAP_TYPE_HOUSE[typeValue];
-  advertPrice.placeholder = MAP_TYPE_HOUSE[typeValue];
+  advertPrice.min = priceMap[typeValue];
+  advertPrice.placeholder = priceMap[typeValue];
 };
 
 const onPriceCheck = () => {
   const priceValue = advertPrice.value;
   const typeValue = advertType.value;
 
-  if (priceValue < MAP_TYPE_HOUSE[typeValue]) {
-    advertPrice.setCustomValidity(`Минимaльная цена для данного типа ${MAP_TYPE_HOUSE[typeValue]} руб.`);
+  if (priceValue < priceMap[typeValue]) {
+    advertPrice.setCustomValidity(`Минимaльная цена для данного типа ${priceMap[typeValue]} руб.`);
   } else if (priceValue > MAX_PRICE) {
     advertPrice.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE} руб.`);
   } else {
@@ -98,7 +98,7 @@ const onPriceCheck = () => {
 const onSuccess = () => {
   advertForm.reset();
   window.main.deactivatePage();
-  window.messages.showSuccessMassage();
+  window.messages.showSuccess();
 };
 
 const onFormSubmit = (evt) => {
@@ -110,8 +110,9 @@ const onFormSubmit = (evt) => {
 
   onCapacityFieldCheck(evtRoom);
 
-  if (advertRoomNumber.reportValidity()) {
-    window.backend.upload(new FormData(advertForm), onSuccess, window.messages.showErrorMassage);
+  if (advertForm.checkValidity()) {
+    window.backend.upload(new FormData(advertForm), onSuccess, window.messages.showError);
+    window.pin.resetMainAddress();
   }
 };
 
@@ -135,5 +136,5 @@ advertPrice.addEventListener(`change`, onPriceCheck);
 advertForm.addEventListener(`submit`, onFormSubmit);
 
 window.form = {
-  toggleForm
+  toggle: toggleForm
 };

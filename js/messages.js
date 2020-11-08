@@ -4,23 +4,23 @@ const main = document.querySelector(`main`);
 const error = document.querySelector(`#error`).content.querySelector(`.error`);
 const success = document.querySelector(`#success`).content.querySelector(`.success`);
 
-const onCloseMessage = (elem) => {
-  const onClickToCloseMessage = () => {
+const onMessageClose = (elem) => {
+  const onCloseMessageClick = () => {
     elem.remove();
   };
 
-  const onPressEscMessage = (evt) => {
-    if (evt.key === `Escape`) {
+  const onEscMessagePress = (evt) => {
+    if (evt.key === window.main.Key.ESCAPE) {
       elem.remove();
     }
   };
 
-  document.addEventListener(`click`, onClickToCloseMessage);
-  document.addEventListener(`keydown`, onPressEscMessage);
+  document.addEventListener(`click`, onCloseMessageClick);
+  document.addEventListener(`keydown`, onEscMessagePress);
 
   if (!elem) {
-    document.removeEventListener(`click`, onClickToCloseMessage);
-    document.removeEventListener(`keydown`, onPressEscMessage);
+    document.removeEventListener(`click`, onCloseMessageClick);
+    document.removeEventListener(`keydown`, onEscMessagePress);
   }
 };
 
@@ -31,7 +31,7 @@ const showErrorMassage = (textError) => {
 
   errorMessage.textContent = textError;
 
-  onCloseMessage(errorPopup);
+  onMessageClose(errorPopup);
   main.insertAdjacentElement(`afterbegin`, errorPopup);
 };
 
@@ -40,10 +40,10 @@ const showSuccessMassage = () => {
 
   main.insertAdjacentElement(`afterbegin`, successPopup);
 
-  onCloseMessage(successPopup);
+  onMessageClose(successPopup);
 };
 
 window.messages = {
-  showErrorMassage,
-  showSuccessMassage
+  showError: showErrorMassage,
+  showSuccess: showSuccessMassage
 };

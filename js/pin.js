@@ -7,6 +7,8 @@ const PIN_HEIGHT = 70;
 
 const MAIN_PIN_SIZE = 65;
 const MAIN_PIN_TAIL = 22;
+const MAIN_PIN_LEFT = 570;
+const MAIN_PIN_TOP = 374;
 
 const mapPins = document.querySelector(`.map__pins`);
 const pin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
@@ -46,23 +48,30 @@ const removePins = () => {
   return pins;
 };
 
-const getMainPinAddress = () => {
+const getMainPinAddress = (bull) => {
   const pinX = parseInt(pinMain.style.left, 10);
   const pinY = parseInt(pinMain.style.top, 10);
   const x = Math.round(pinX + MAIN_PIN_SIZE / 2);
+
   const y = Math.round(
-      window.main.isPageActive ? pinY + MAIN_PIN_SIZE / 2 : pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL
+      bull ? pinY + MAIN_PIN_SIZE + MAIN_PIN_TAIL : pinY + MAIN_PIN_SIZE / 2
   );
 
   advertAddress.value = `${x}, ${y}`;
 };
 
-getMainPinAddress();
+const resetMainPinAddress = () => {
+  pinMain.style.left = `${MAIN_PIN_LEFT}px`;
+  pinMain.style.top = `${MAIN_PIN_TOP}px`;
+};
+
+getMainPinAddress(window.main.isPageActive);
 
 window.pin = {
   MAIN_PIN_SIZE,
   MAIN_PIN_TAIL,
-  renderPins,
-  removePins,
-  getMainPinAddress
+  render: renderPins,
+  remove: removePins,
+  getMainAddress: getMainPinAddress,
+  resetMainAddress: resetMainPinAddress
 };

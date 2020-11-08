@@ -40,6 +40,18 @@ const toggleFormElementsState = (nodes, state) => {
   }
 };
 
+const toggleFormElementsChecked = (nodes) => {
+  for (let elem of nodes) {
+    elem.checked = false;
+  }
+};
+
+const checkRemove = (elem) => {
+  if (elem) {
+    elem.remove();
+  }
+};
+
 const addIdToOffer = (array) => {
   array.forEach((value, index) => {
     value.offer.offerId = index;
@@ -56,5 +68,7 @@ window.util = {
   getRandomIndex,
   getRandomLengthArray,
   toggleFormElementsState,
+  toggleFormElementsChecked,
+  checkRemove,
   addIdToOffer
 };

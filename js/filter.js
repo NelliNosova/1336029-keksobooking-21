@@ -3,7 +3,7 @@
 const ANY_VALUE = `any`;
 const NUMBER_PINS = 5;
 
-const PRICE_MAP = {
+const priceMap = {
   low: {
     min: 0,
     max: 10000
@@ -17,6 +17,8 @@ const PRICE_MAP = {
     max: Infinity
   }
 };
+
+const TIME_OUT = 500;
 
 const filter = document.querySelector(`.map__filters-container`);
 const housingType = filter.querySelector(`#housing-type`);
@@ -32,8 +34,8 @@ const getFilterType = (elem) => {
 
 const getFilterPrice = (elem) => {
   return housingPrice.value === ANY_VALUE ||
-    elem.offer.price <= PRICE_MAP[housingPrice.value].max &&
-    elem.offer.price >= PRICE_MAP[housingPrice.value].min;
+    elem.offer.price <= priceMap[housingPrice.value].max &&
+    elem.offer.price >= priceMap[housingPrice.value].min;
 };
 
 const getFilterRooms = (elem) => {
@@ -76,13 +78,22 @@ const filterData = (array) => {
 const onFilterChange = () => {
   const filteredAdverts = filterData(window.dataWithId);
 
-  window.card.removeCard();
-  window.pin.removePins();
-  window.pin.renderPins(filteredAdverts);
+  let lastTimeOut;
+
+  if (lastTimeOut) {
+    window.clearTimeout(lastTimeOut);
+  }
+
+  lastTimeOut = window.setTimeout(function () {
+    window.card.remove();
+    window.pin.remove();
+    window.pin.render(filteredAdverts);
+  }, TIME_OUT);
+
 };
 
 filter.addEventListener(`change`, onFilterChange);
 
 window.filter = {
-  filterData
+  getData: filterData
 };

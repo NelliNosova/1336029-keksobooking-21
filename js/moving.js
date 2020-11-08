@@ -56,7 +56,7 @@ pinMain.addEventListener(`mousedown`, (evt) => {
       pinMain.style.left = `${pinMainLeft}px`;
     }
 
-    window.pin.getMainPinAddress();
+    window.pin.getMainAddress(window.main.isPageActive);
   };
 
   const onMouseUp = (upEvt) => {
@@ -65,12 +65,12 @@ pinMain.addEventListener(`mousedown`, (evt) => {
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
 
-    const onClickPreventDefault = (clickEvt) => {
+    const onPreventDefaultClick = (clickEvt) => {
       clickEvt.preventDefault();
-      pinMain.removeEventListener(`click`, onClickPreventDefault);
+      pinMain.removeEventListener(`click`, onPreventDefaultClick);
     };
 
-    pinMain.addEventListener(`click`, onClickPreventDefault);
+    pinMain.addEventListener(`click`, onPreventDefaultClick);
   };
 
   document.addEventListener(`mousemove`, onMouseMove);
