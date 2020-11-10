@@ -126,6 +126,7 @@ const toggleForm = (state, bull) => {
 window.util.toggleFormElementsState(formFieldsets, true);
 window.util.toggleFormElementsState(formSelects, true);
 
+onTypeCheck();
 advertTitle.addEventListener(`change`, onTitleChange);
 advertRoomNumber.addEventListener(`change`, onCapacityFieldCheck);
 advertCapacityNumber.addEventListener(`change`, onCapacityFieldCheck);

@@ -17,7 +17,6 @@ const getSrc = (chooser, elemSrc) => {
   if (matches) {
     const reader = new FileReader();
 
-
     reader.addEventListener(`load`, function () {
       elemSrc.src = reader.result;
     });

@@ -64,13 +64,6 @@ pinMain.addEventListener(`mousedown`, (evt) => {
 
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
-
-    const onPreventDefaultClick = (clickEvt) => {
-      clickEvt.preventDefault();
-      pinMain.removeEventListener(`click`, onPreventDefaultClick);
-    };
-
-    pinMain.addEventListener(`click`, onPreventDefaultClick);
   };
 
   document.addEventListener(`mousemove`, onMouseMove);

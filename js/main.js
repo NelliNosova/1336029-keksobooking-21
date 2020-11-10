@@ -1,10 +1,5 @@
 'use strict';
 
-const Key = {
-  ENTER: `Enter`,
-  ESCAPE: `Escape`
-};
-
 const mapPins = document.querySelector(`.map__pins`);
 const pinMain = document.querySelector(`.map__pin--main`);
 const resetButton = document.querySelector(`.ad-form__reset`);
@@ -51,7 +46,7 @@ pinMain.addEventListener(`mousedown`, (evt) => {
 });
 
 pinMain.addEventListener(`keydown`, (evt) => {
-  if (evt.key === Key.ENTER) {
+  if (evt.key === window.util.Key.ENTER) {
     activatePage();
   }
 });
@@ -63,7 +58,7 @@ mapPins.addEventListener(`mousedown`, (evt) => {
 });
 
 mapPins.addEventListener(`keydown`, (evt) => {
-  if (evt.key === Key.ENTER && evt.target.closest(`button[data-id]`)) {
+  if (evt.key === window.util.Key.ENTER && evt.target.closest(`button[data-id]`)) {
     window.card.open(evt);
   }
 });
@@ -74,7 +69,6 @@ resetButton.addEventListener(`click`, () => {
 });
 
 window.main = {
-  Key,
   isPageActive,
   activatePage,
   deactivatePage

@@ -3,6 +3,8 @@
 const ANY_VALUE = `any`;
 const NUMBER_PINS = 5;
 
+const TIME_OUT = 500;
+
 const priceMap = {
   low: {
     min: 0,
@@ -17,8 +19,6 @@ const priceMap = {
     max: Infinity
   }
 };
-
-const TIME_OUT = 500;
 
 const filter = document.querySelector(`.map__filters-container`);
 const housingType = filter.querySelector(`#housing-type`);
@@ -78,21 +78,12 @@ const filterData = (array) => {
 const onFilterChange = () => {
   const filteredAdverts = filterData(window.dataWithId);
 
-  let lastTimeOut;
-
-  if (lastTimeOut) {
-    window.clearTimeout(lastTimeOut);
-  }
-
-  lastTimeOut = window.setTimeout(function () {
-    window.card.remove();
-    window.pin.remove();
-    window.pin.render(filteredAdverts);
-  }, TIME_OUT);
-
+  window.card.remove();
+  window.pin.remove();
+  window.pin.render(filteredAdverts);
 };
 
-filter.addEventListener(`change`, onFilterChange);
+filter.addEventListener(`change`, window.util.debounce(onFilterChange, TIME_OUT));
 
 window.filter = {
   getData: filterData
