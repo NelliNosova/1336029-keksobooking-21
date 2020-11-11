@@ -3,7 +3,6 @@
 const mapPins = document.querySelector(`.map__pins`);
 const pinMain = document.querySelector(`.map__pin--main`);
 const advertForm = document.querySelector(`.ad-form`);
-const advertPrice = advertForm.querySelector(`#price`);
 const resetButton = document.querySelector(`.ad-form__reset`);
 
 let isPageActive = false;
