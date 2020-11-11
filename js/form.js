@@ -137,5 +137,6 @@ advertPrice.addEventListener(`change`, onPriceCheck);
 advertForm.addEventListener(`submit`, onFormSubmit);
 
 window.form = {
+  onTypeCheck,
   toggle: toggleForm
 };
