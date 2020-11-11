@@ -2,6 +2,7 @@
 
 const mapPins = document.querySelector(`.map__pins`);
 const pinMain = document.querySelector(`.map__pin--main`);
+const advertForm = document.querySelector(`.ad-form`);
 const resetButton = document.querySelector(`.ad-form__reset`);
 
 let isPageActive = false;
@@ -64,6 +65,7 @@ mapPins.addEventListener(`keydown`, (evt) => {
 });
 
 resetButton.addEventListener(`click`, () => {
+  advertForm.reset();
   window.pin.resetMainAddress();
   deactivatePage();
 });
